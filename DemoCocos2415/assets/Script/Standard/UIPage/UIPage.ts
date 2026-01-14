@@ -22,8 +22,6 @@ export class UIPage extends cc.Component {
     // UIElement components assigned via the Cocos Creator inspector.
     private uiElements: UIElement[] = [];
 
-    // Cached UIOpacity component (initialized in onLoad and assumed non-null afterwards).
-    private uiOpacity!: cc.UIOpacity;
     // Cache duration values. A negative sentinel (-99) indicates the duration has
     // not been computed / cached yet; valid animation durations are expected to be >= 0.
     private cacheShowDuration: number = -99;
@@ -48,8 +46,8 @@ export class UIPage extends cc.Component {
         } else {
             this.uiElements = [];
         }
-        // Cache UIOpacity so we can control page visibility via opacity.
-        this.uiOpacity = this.node.getComponent(cc.UIOpacity) ?? this.node.addComponent(cc.UIOpacity);
+        // Ensure default opacity is set explicitly if needed.
+        this.node.opacity = 255;
 
         // Create an input-blocking node to manage interaction for this page.
         this.generateBlockTouchNode();
@@ -66,7 +64,7 @@ export class UIPage extends cc.Component {
     onEnable(): void {
         // Apply hide-by-default using cached uiOpacity (populated in onLoad).
         if (this.hideByDefault) {
-            this.uiOpacity.opacity = 0;
+            this.node.opacity = 0;
         } else if (this.showAtOnEnable) {
             // When not hidden by default, optionally show the page immediately on enable.
             this.show();
@@ -85,7 +83,7 @@ export class UIPage extends cc.Component {
 
         // Ensure page is visible immediately by setting node opacity to fully opaque
         // (use cached uiOpacity from onLoad; do not query/add components here).
-        this.uiOpacity.opacity = 255;
+        this.node.opacity = 255;
 
         // Ensure this page is rendered above sibling pages by moving it to the
         // last sibling position in the parent.
@@ -115,7 +113,7 @@ export class UIPage extends cc.Component {
 
         // Ensure page is visible during hide animation by setting node opacity to fully opaque
         // (use cached uiOpacity from onLoad; do not query/add components here).
-        this.uiOpacity.opacity = 255;
+        this.node.opacity = 255;
 
         // Keep the same stacking behavior on hide to ensure animations are
         // visible if other UI overlaps during the hide animation.
@@ -128,10 +126,10 @@ export class UIPage extends cc.Component {
         // After all hide animations complete, set the page opacity to 0 so the page is fully hidden.
         const hideDuration = Math.max(0, this.getHideDuration());
         if (hideDuration === 0) {
-            this.uiOpacity.opacity = 0;
+            this.node.opacity = 0;
         } else {
             this.scheduleOnce(() => {
-                this.uiOpacity.opacity = 0;
+                this.node.opacity = 0;
             }, hideDuration);
         }
     }
