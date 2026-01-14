@@ -1,7 +1,7 @@
 const { ccclass, property } = cc._decorator;
 import { BaseUIElementAnimation } from "./BaseUIElementAnimation";
 
-@ccclass("UIElement")
+@ccclass
 export class UIElement extends cc.Component {
     //------------------------------
     //--- Private Properties

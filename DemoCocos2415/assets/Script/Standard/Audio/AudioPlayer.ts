@@ -10,7 +10,7 @@ export enum AudioType {
     SFX = 2,
 }
 
-@ccclass("AudioPlayer")
+@ccclass
 export class AudioPlayer extends cc.Component {
     //------------------------------
     //--- Public Properties

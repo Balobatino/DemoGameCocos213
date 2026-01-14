@@ -1,6 +1,6 @@
 const { ccclass, property } = cc._decorator;
 
-@ccclass("BaseUIElementAnimation")
+@ccclass
 export abstract class BaseUIElementAnimation extends cc.Component {
     /**
      * Called to play show animation on the element.

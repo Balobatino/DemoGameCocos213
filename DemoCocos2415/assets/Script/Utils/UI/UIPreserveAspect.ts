@@ -12,7 +12,7 @@ const FitParentOnAxisEnum = cc.Enum(FitParentOnAxis);
  * Component that adjusts node scale to maintain the aspect ratio of a Sprite
  * based on its parent container content size.
  */
-@ccclass("UIPreserveAspect")
+@ccclass
 @executeInEditMode
 export class UIPreserveAspect extends cc.Component {
     // #region Properties

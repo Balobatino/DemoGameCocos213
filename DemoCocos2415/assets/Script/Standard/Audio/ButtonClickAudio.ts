@@ -1,7 +1,7 @@
 const { ccclass, property } = cc._decorator;
 import { AudioManager } from "./AudioManager";
 
-@ccclass("ButtonClickAudio")
+@ccclass
 export class ButtonClickAudio extends cc.Component {
     //------------------------------
     //--- Inspector Properties

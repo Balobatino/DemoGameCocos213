@@ -9,7 +9,7 @@ import { EasingType, EasingMap } from "./AnimationMapCache";
  * and provides public `show()` / `hide()` methods which use the project's
  * centralized `EasingMap` and Cocos' `tween` system.
  */
-@ccclass("UIElementScaleAnimation")
+@ccclass
 export class UIElementScaleAnimation extends BaseUIElementAnimation {
     // Show animation configuration
     @property

@@ -10,7 +10,7 @@ import { EasingType, EasingMap } from "./AnimationMapCache";
  * public `show()` / `hide()` methods that use the project's centralized
  * `EasingMap` and Cocos' `tween` system.
  */
-@ccclass("UIElementMoveAnimation")
+@ccclass
 export class UIElementMoveAnimation extends BaseUIElementAnimation {
     // Cached default position (world-local 2D position) captured in onLoad().
     @property

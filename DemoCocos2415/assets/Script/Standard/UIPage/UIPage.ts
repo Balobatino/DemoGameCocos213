@@ -6,7 +6,7 @@ import { setAsLastSibling } from "../../Utils/NodeUtils";
  * UIPage: container for a page composed of multiple UIElement components.
  * Drag UIElement component instances into `uiElements` in the inspector.
  */
-@ccclass("UIPage")
+@ccclass
 export class UIPage extends cc.Component {
     //------------------------------
     //------ Properties

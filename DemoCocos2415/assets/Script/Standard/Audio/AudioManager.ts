@@ -6,7 +6,7 @@ import { CollectionUtils } from "../../Utils/CollectionUtils";
 /**
  * Simple pooled audio manager that provides one-shot SFX and looped BGM players.
  */
-@ccclass("AudioManager")
+@ccclass
 export class AudioManager extends Singleton<AudioManager> {
     //------------------------------
     //--- Private Properties
