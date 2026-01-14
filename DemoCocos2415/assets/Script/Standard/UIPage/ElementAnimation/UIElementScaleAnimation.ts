@@ -54,6 +54,10 @@ export class UIElementScaleAnimation extends BaseUIElementAnimation {
      */
     public show(onComplete?: () => void): void {
         if (!this.node) return;
+        // log node name, from scale, to scale
+        // console.log(
+        //     `UIElementScaleAnimation: Starting show animation on node '${this.node.name}'. From scale: (${this.showFromScale.x}, ${this.showFromScale.y}) To scale: (${this.showToScale.x}, ${this.showToScale.y})`
+        // );
 
         // Cancel any in-progress tween
         if (this._activeTween) {
@@ -72,10 +76,14 @@ export class UIElementScaleAnimation extends BaseUIElementAnimation {
         const t = cc
             .tween(this.node)
             .delay(this.showDelay)
-            .to(this.showDuration, { scale: new cc.Vec3(to.x, to.y, z) }, { easing: EasingMap.get(this.showEasing) })
+            // Update : Tween per-axis numeric scale properties to avoid NaN produced when assigning a Vec3 directly.
+            // fix issue on cocos 2.415 where setting scale to Vec3 causes NaN
+            .to(this.showDuration, { scaleX: to.x, scaleY: to.y, scaleZ: z }, { easing: EasingMap.get(this.showEasing) })
             .call(() => {
                 this._activeTween = null;
                 if (onComplete) onComplete();
+                // log node name, current scale
+                // console.log(`UIElementScaleAnimation: Show animation completed on node '${this.node.name}'. Final scale: (${this.node.scaleX}, ${this.node.scaleY}, ${this.node.scaleZ})`);
             });
 
         this._activeTween = t;
@@ -106,7 +114,8 @@ export class UIElementScaleAnimation extends BaseUIElementAnimation {
         const t = cc
             .tween(this.node)
             .delay(this.hideDelay)
-            .to(this.hideDuration, { scale: new cc.Vec3(to.x, to.y, z) }, { easing: EasingMap.get(this.hideEasing) })
+            // Tween per-axis numeric scale properties for consistency.
+            .to(this.hideDuration, { scaleX: to.x, scaleY: to.y, scaleZ: z }, { easing: EasingMap.get(this.hideEasing) })
             .call(() => {
                 this._activeTween = null;
                 if (onComplete) onComplete();
