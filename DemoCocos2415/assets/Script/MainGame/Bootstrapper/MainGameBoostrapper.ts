@@ -1,8 +1,8 @@
 const { ccclass, property } = cc._decorator;
 import { Singleton } from "../../Standard/Singleton";
 import { MainGameLoadingCover } from "./MainGameLoadingCover";
-// import { GameMainPage } from "./UI/GameMainPage";
 import { AudioManager } from "../../Standard/Audio/AudioManager";
+import { GameMainPage } from "../UI/GameMainPage";
 
 /**
  * Bootstraps the main game scene sequence.
@@ -75,16 +75,16 @@ export class MainGameBoostrapper extends Singleton<MainGameBoostrapper> {
      * Logs warnings if the singleton or UIPage component is missing.
      */
     private openMainPage(): void {
-        // const gameMainPage = GameMainPage.getInstance<GameMainPage>();
-        // if (!gameMainPage) {
-        //     console.warn("GameMainPage singleton instance not found in Main scene.");
-        //     return;
-        // }
-        // const uiPage = gameMainPage.getUiPage();
-        // if (uiPage) {
-        //     uiPage.show();
-        // } else {
-        //     console.warn("GameMainPage: UIPage component not found; cannot call show().");
-        // }
+        const gameMainPage = GameMainPage.getInstance<GameMainPage>();
+        if (!gameMainPage) {
+            console.warn("GameMainPage singleton instance not found in Main scene.");
+            return;
+        }
+        const uiPage = gameMainPage.getUiPage();
+        if (uiPage) {
+            uiPage.show();
+        } else {
+            console.warn("GameMainPage: UIPage component not found; cannot call show().");
+        }
     }
 }
