@@ -5,7 +5,7 @@ const { ccclass, property } = cc._decorator;
  * Inspector UI reference for the splash loading bar.
  */
 //
-@ccclass
+@ccclass("UIReference")
 export class UIReference {
     @property({ type: cc.Sprite })
     public loadingFillBar: cc.Sprite | null = null;
