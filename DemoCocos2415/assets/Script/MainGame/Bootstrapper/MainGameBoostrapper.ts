@@ -51,6 +51,8 @@ export class MainGameBoostrapper extends Singleton<MainGameBoostrapper> {
             const audioMgr = AudioManager.getInstance<AudioManager>();
             if (audioMgr) {
                 audioMgr.playBgm(this.mainBGM);
+            } else {
+                console.warn("MainGameBoostrapper: AudioManager singleton instance not found; cannot play BGM.");
             }
         } else {
             console.warn("MainGameBoostrapper: mainBGM AudioClip not assigned in inspector.");

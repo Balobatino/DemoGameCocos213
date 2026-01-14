@@ -78,16 +78,19 @@
         "__id__": 7
       },
       {
-        "__id__": 10
+        "__id__": 9
+      },
+      {
+        "__id__": 12
       }
     ],
     "_active": true,
     "_components": [
       {
-        "__id__": 14
+        "__id__": 16
       },
       {
-        "__id__": 15
+        "__id__": 17
       }
     ],
     "_prefab": null,
@@ -140,7 +143,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "MainGameBootstrapper",
+    "_name": "AudioManager",
     "_objFlags": 0,
     "_parent": {
       "__id__": 2
@@ -198,24 +201,21 @@
     "_is3DNode": false,
     "_groupIndex": 0,
     "groupIndex": 0,
-    "_id": "837GonRQJO/qGvUic2pgEj"
+    "_id": "3dkraqkvJIhqKy0rTJ2ebs"
   },
   {
-    "__type__": "280d344YV5MbYPk9SKDDTAN",
+    "__type__": "69e47CuxsJCe56gUVu5+04j",
     "_name": "",
     "_objFlags": 0,
     "node": {
       "__id__": 3
     },
     "_enabled": true,
-    "mainBGM": {
-      "__uuid__": "5beb3e85-f7ac-4eeb-b133-6dd4465f23d5"
-    },
-    "_id": "d8worT8YdEjqfvCfDWB8lj"
+    "_id": "719RO4xgdH151sqLhvhCZT"
   },
   {
     "__type__": "cc.Node",
-    "_name": "Main Camera",
+    "_name": "MainGameBootstrapper",
     "_objFlags": 0,
     "_parent": {
       "__id__": 2
@@ -273,6 +273,81 @@
     "_is3DNode": false,
     "_groupIndex": 0,
     "groupIndex": 0,
+    "_id": "837GonRQJO/qGvUic2pgEj"
+  },
+  {
+    "__type__": "280d344YV5MbYPk9SKDDTAN",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 5
+    },
+    "_enabled": true,
+    "mainBGM": {
+      "__uuid__": "5beb3e85-f7ac-4eeb-b133-6dd4465f23d5"
+    },
+    "_id": "d8worT8YdEjqfvCfDWB8lj"
+  },
+  {
+    "__type__": "cc.Node",
+    "_name": "Main Camera",
+    "_objFlags": 0,
+    "_parent": {
+      "__id__": 2
+    },
+    "_children": [],
+    "_active": true,
+    "_components": [
+      {
+        "__id__": 8
+      }
+    ],
+    "_prefab": null,
+    "_opacity": 255,
+    "_color": {
+      "__type__": "cc.Color",
+      "r": 255,
+      "g": 255,
+      "b": 255,
+      "a": 255
+    },
+    "_contentSize": {
+      "__type__": "cc.Size",
+      "width": 0,
+      "height": 0
+    },
+    "_anchorPoint": {
+      "__type__": "cc.Vec2",
+      "x": 0.5,
+      "y": 0.5
+    },
+    "_trs": {
+      "__type__": "TypedArray",
+      "ctor": "Float64Array",
+      "array": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    "_eulerAngles": {
+      "__type__": "cc.Vec3",
+      "x": 0,
+      "y": 0,
+      "z": 0
+    },
+    "_skewX": 0,
+    "_skewY": 0,
+    "_is3DNode": false,
+    "_groupIndex": 0,
+    "groupIndex": 0,
     "_id": "aaOLFXj51Bi5EIheyzSogx"
   },
   {
@@ -280,7 +355,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 5
+      "__id__": 7
     },
     "_enabled": true,
     "_cullingMask": 4294967295,
@@ -322,10 +397,10 @@
     "_active": true,
     "_components": [
       {
-        "__id__": 8
+        "__id__": 10
       },
       {
-        "__id__": 9
+        "__id__": 11
       }
     ],
     "_prefab": null,
@@ -381,7 +456,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 7
+      "__id__": 9
     },
     "_enabled": true,
     "alignMode": 1,
@@ -410,7 +485,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 7
+      "__id__": 9
     },
     "_enabled": true,
     "_materials": [
@@ -448,13 +523,13 @@
     "_active": true,
     "_components": [
       {
-        "__id__": 11
-      },
-      {
-        "__id__": 12
-      },
-      {
         "__id__": 13
+      },
+      {
+        "__id__": 14
+      },
+      {
+        "__id__": 15
       }
     ],
     "_prefab": null,
@@ -510,7 +585,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 10
+      "__id__": 12
     },
     "_enabled": true,
     "alignMode": 1,
@@ -537,7 +612,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 10
+      "__id__": 12
     },
     "_enabled": true,
     "_materials": [
@@ -569,11 +644,11 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 10
+      "__id__": 12
     },
     "_enabled": true,
     "screenCover": {
-      "__id__": 12
+      "__id__": 14
     },
     "fadeAnimationDuration": 1,
     "_id": "3fqwMe19RGt44N69xW/Hq/"

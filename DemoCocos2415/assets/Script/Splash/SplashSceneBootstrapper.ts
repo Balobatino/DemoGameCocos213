@@ -41,7 +41,7 @@ export class SplashSceneBootstrapper extends Singleton<SplashSceneBootstrapper> 
         // Ensure the cover is immediately black and opaque at scene open.
         if (loadingCover) {
             loadingCover.coverScreen();
-            console.log(`SplashLoadingCover: coverScreen called. time ${now()}`);
+            // console.log(`SplashLoadingCover: coverScreen called. time ${now()}`);
         }
 
         // Initial short delay so the opaque cover is visible briefly.
@@ -49,7 +49,7 @@ export class SplashSceneBootstrapper extends Singleton<SplashSceneBootstrapper> 
 
         // Fade out to reveal the splash content.
         if (loadingCover) {
-            console.log(`SplashLoadingCover: runFadeOut called. time ${now()}`);
+            // console.log(`SplashLoadingCover: runFadeOut called. time ${now()}`);
             loadingCover.runFadeOut();
             // Wait for the fade out animation to finish.
             await this.sleep(loadingCover.fadeAnimationDuration * 1000);
@@ -70,7 +70,7 @@ export class SplashSceneBootstrapper extends Singleton<SplashSceneBootstrapper> 
 
         // Fade back to opaque before switching scenes.
         if (loadingCover) {
-            console.log(`SplashLoadingCover: runFadeIn called. time ${now()}`);
+            // console.log(`SplashLoadingCover: runFadeIn called. time ${now()}`);
             loadingCover.runFadeIn();
             await this.sleep(loadingCover.fadeAnimationDuration * 1000);
         }
