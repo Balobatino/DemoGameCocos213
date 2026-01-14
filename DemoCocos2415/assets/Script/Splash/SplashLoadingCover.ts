@@ -32,9 +32,7 @@ export class SplashLoadingCover extends Singleton<SplashLoadingCover> {
     protected doOnLoad(): void {
         if (!this.screenCover) return;
         // Ensure the node has an opacity property.
-        if (typeof this.screenCover.node.opacity !== "number") {
-            this.screenCover.node.opacity = 255;
-        }
+        this.screenCover.node.opacity = 255;
     }
 
     //------------------------------
