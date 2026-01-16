@@ -1,6 +1,6 @@
 {
   "ver": "2.3.7",
-  "uuid": "80bf91ae-bac1-4c94-91f9-ad10a1c99a67",
+  "uuid": "7e8c02a4-58c9-4d4e-b587-a7da22dc57e0",
   "importer": "texture",
   "type": "sprite",
   "wrapMode": "clamp",
@@ -8,15 +8,15 @@
   "premultiplyAlpha": false,
   "genMipmaps": false,
   "packable": true,
-  "width": 864,
-  "height": 1184,
+  "width": 1536,
+  "height": 672,
   "platformSettings": {},
   "subMetas": {
-    "SplashBG": {
+    "MainGameBG": {
       "ver": "1.0.6",
-      "uuid": "59945bde-09b8-4ac1-8959-e4a96754fabc",
+      "uuid": "46bc87b4-2941-4679-9c3e-62348e81b3df",
       "importer": "sprite-frame",
-      "rawTextureUuid": "80bf91ae-bac1-4c94-91f9-ad10a1c99a67",
+      "rawTextureUuid": "7e8c02a4-58c9-4d4e-b587-a7da22dc57e0",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,
