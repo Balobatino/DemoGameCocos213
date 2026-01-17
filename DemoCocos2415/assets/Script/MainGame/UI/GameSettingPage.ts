@@ -188,27 +188,34 @@ export class GameSettingPage extends Singleton<GameSettingPage> {
      * Currently logs a message; actual close/hide logic to be implemented.
      */
     private onCloseButtonClicked(): void {
-        // console.log("Close button clicked. Closing settings...");
         const uiPage = this.getUiPage();
-        if (uiPage) {
-            uiPage.hide();
-        } else {
-            console.warn("GameSettingPage: UIPage component not found; cannot call hide().");
-        }
 
-        // reopen the main page
-        const gameMainPage = GameMainPage.getInstance<GameMainPage>();
-        if (!gameMainPage) {
-            console.warn("GameMainPage singleton instance not found in Main scene.");
+        // Guard: missing UIPage
+        if (!uiPage) {
+            console.warn("GameSettingPage: UIPage component not found; cannot call hide().");
             return;
         }
 
-        const mainUiPage = gameMainPage.getUiPage();
-        if (mainUiPage) {
-            mainUiPage.show();
-        } else {
-            console.warn("GameMainPage: UIPage component not found; cannot call show().");
-        }
+        // hide the settings page
+        uiPage.hide();
+
+        // Delay 50% of hide duration before reopening the main page
+        const delay = uiPage.getHideDuration() * 0.5;
+        this.scheduleOnce(() => {
+            // reopen the main page
+            const gameMainPage = GameMainPage.getInstance<GameMainPage>();
+            if (!gameMainPage) {
+                console.warn("GameMainPage singleton instance not found in Main scene.");
+                return;
+            }
+
+            const mainUiPage = gameMainPage.getUiPage();
+            if (mainUiPage) {
+                mainUiPage.show();
+            } else {
+                console.warn("GameMainPage: UIPage component not found; cannot call show().");
+            }
+        }, delay);
     }
 
     //------------------------------

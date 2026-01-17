@@ -97,15 +97,19 @@ export class GameMainPage extends Singleton<GameMainPage> {
      * Currently logs a message; actual game start logic to be implemented.
      */
     private onPlayGameButtonClicked(): void {
+        const mainUiPage = this.getUiPage();
+
+        // Guard: missing UIPage
+        if (!mainUiPage) {
+            console.warn("GameMainPage: UIPage component not found; cannot call hide().");
+            return;
+        }
+
         // hide the main page
+        mainUiPage.hide();
+
         // log
         console.log("Play Game button clicked. Starting game...");
-        const mainUiPage = this.getUiPage();
-        if (mainUiPage) {
-            mainUiPage.hide();
-        } else {
-            console.warn("GameMainPage: UIPage component not found; cannot call hide().");
-        }
 
         // // Open the GameLevelSelectPage UIPage.
         // const levelSelectPage = GameLevelSelectPage.getInstance<GameLevelSelectPage>();
@@ -127,28 +131,35 @@ export class GameMainPage extends Singleton<GameMainPage> {
      * Opens the settings UI (by showing the GameSettingPage UIPage) if present.
      */
     private onSettingsButtonClicked(): void {
-        console.log("Settings button clicked. Opening settings...");
-        //  hide the main page
+        // console.log("Settings button clicked. Opening settings...");
         const mainUiPage = this.getUiPage();
-        if (mainUiPage) {
-            mainUiPage.hide();
-        } else {
-            console.warn("GameMainPage: UIPage component not found; cannot call hide().");
-        }
 
-        // Open the GameSettingPage UIPage.
-        const gameSettingPage = GameSettingPage.getInstance<GameSettingPage>();
-        if (!gameSettingPage) {
-            console.warn("GameSettingPage singleton instance not found in Main scene.");
+        // Guard: missing UIPage
+        if (!mainUiPage) {
+            console.warn("GameMainPage: UIPage component not found; cannot call hide().");
             return;
         }
 
-        const uiPage = gameSettingPage.getUiPage();
-        if (uiPage) {
-            uiPage.show();
-        } else {
-            console.warn("GameSettingPage: UIPage component not found; cannot call show().");
-        }
+        // hide the main page
+        mainUiPage.hide();
+
+        // Delay 50% of hide duration before opening settings page
+        const delay = mainUiPage.getHideDuration() * 0.5;
+        this.scheduleOnce(() => {
+            // Open the GameSettingPage UIPage.
+            const gameSettingPage = GameSettingPage.getInstance<GameSettingPage>();
+            if (!gameSettingPage) {
+                console.warn("GameSettingPage singleton instance not found in Main scene.");
+                return;
+            }
+
+            const uiPage = gameSettingPage.getUiPage();
+            if (uiPage) {
+                uiPage.show();
+            } else {
+                console.warn("GameSettingPage: UIPage component not found; cannot call show().");
+            }
+        }, delay);
     }
 
     //------------------------------
