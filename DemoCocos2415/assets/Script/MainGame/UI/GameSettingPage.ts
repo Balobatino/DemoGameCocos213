@@ -199,8 +199,8 @@ export class GameSettingPage extends Singleton<GameSettingPage> {
         // hide the settings page
         uiPage.hide();
 
-        // Delay 50% of hide duration before reopening the main page
-        const delay = uiPage.getHideDuration() * 0.5;
+        // Delay 75% of hide duration before reopening the main page
+        const delay = uiPage.getHideDuration() * 0.75;
         this.scheduleOnce(() => {
             // reopen the main page
             const gameMainPage = GameMainPage.getInstance<GameMainPage>();

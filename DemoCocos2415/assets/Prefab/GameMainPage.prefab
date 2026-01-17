@@ -225,7 +225,7 @@
       "x": 1,
       "y": 1
     },
-    "hideDuration": 0.35,
+    "hideDuration": 0.2,
     "hideDelay": 0,
     "hideEasing": 0,
     "hideFromScale": {
@@ -716,7 +716,7 @@
       "y": 1
     },
     "hideDuration": 0.2,
-    "hideDelay": 0.1,
+    "hideDelay": 0,
     "hideEasing": 0,
     "hideFromScale": {
       "__type__": "cc.Vec2",
@@ -1196,7 +1196,7 @@
     },
     "_enabled": true,
     "showDuration": 0.2,
-    "showDelay": 0.4,
+    "showDelay": 0.6,
     "showEasing": 23,
     "showFromScale": {
       "__type__": "cc.Vec2",
@@ -1209,7 +1209,7 @@
       "y": 1
     },
     "hideDuration": 0.2,
-    "hideDelay": 0.2,
+    "hideDelay": 0,
     "hideEasing": 0,
     "hideFromScale": {
       "__type__": "cc.Vec2",

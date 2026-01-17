@@ -119,8 +119,8 @@ export class GameModePage extends Singleton<GameModePage> {
         // hide the mode selection page
         uiPage.hide();
 
-        // Delay 50% of hide duration before reopening the main page
-        const delay = uiPage.getHideDuration() * 0.5;
+        // Delay 75% of hide duration before reopening the main page
+        const delay = uiPage.getHideDuration() * 0.75;
         this.scheduleOnce(() => {
             // reopen the main page
             const gameMainPage = GameMainPage.getInstance<GameMainPage>();

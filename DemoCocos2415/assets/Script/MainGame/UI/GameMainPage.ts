@@ -1,5 +1,6 @@
 import { Singleton } from "../../Standard/Singleton";
 import { UIPage } from "../../Standard/UIPage/UIPage";
+import { GameModePage } from "./GameModePage/GameModePage";
 import { GameSettingPage } from "./GameSettingPage";
 // import { GameLevelSelectPage } from "./GameLevelSelectPage";
 const { ccclass, property } = cc._decorator;
@@ -111,19 +112,19 @@ export class GameMainPage extends Singleton<GameMainPage> {
         // log
         console.log("Play Game button clicked. Starting game...");
 
-        // // Open the GameLevelSelectPage UIPage.
-        // const levelSelectPage = GameLevelSelectPage.getInstance<GameLevelSelectPage>();
-        // if (!levelSelectPage) {
-        //     console.warn("GameLevelSelectPage singleton instance not found in Main scene.");
-        //     return;
-        // }
+        // Open the GameLevelSelectPage UIPage.
+        const gameModePage = GameModePage.getInstance<GameModePage>();
+        if (!gameModePage) {
+            console.warn("GameModePage singleton instance not found in Main scene.");
+            return;
+        }
 
-        // const uiPage = levelSelectPage.getUiPage();
-        // if (uiPage) {
-        //     uiPage.show();
-        // } else {
-        //     console.warn("GameLevelSelectPage: UIPage component not found; cannot call show().");
-        // }
+        const uiPage = gameModePage.getUiPage();
+        if (uiPage) {
+            uiPage.show();
+        } else {
+            console.warn("GameModePage: UIPage component not found; cannot call show().");
+        }
     }
 
     /**
@@ -143,8 +144,8 @@ export class GameMainPage extends Singleton<GameMainPage> {
         // hide the main page
         mainUiPage.hide();
 
-        // Delay 50% of hide duration before opening settings page
-        const delay = mainUiPage.getHideDuration() * 0.5;
+        // Delay 75% of hide duration before opening settings page
+        const delay = mainUiPage.getHideDuration() * 0.75;
         this.scheduleOnce(() => {
             // Open the GameSettingPage UIPage.
             const gameSettingPage = GameSettingPage.getInstance<GameSettingPage>();
