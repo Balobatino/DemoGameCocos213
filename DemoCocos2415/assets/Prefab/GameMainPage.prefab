@@ -30,20 +30,20 @@
     "_active": true,
     "_components": [
       {
-        "__id__": 33
-      },
-      {
         "__id__": 34
       },
       {
         "__id__": 35
       },
       {
-        "__id__": 37
+        "__id__": 36
+      },
+      {
+        "__id__": 38
       }
     ],
     "_prefab": {
-      "__id__": 38
+      "__id__": 39
     },
     "_opacity": 255,
     "_color": {
@@ -138,7 +138,7 @@
       "ctor": "Float64Array",
       "array": [
         0,
-        136,
+        78.817,
         0,
         0,
         0,
@@ -304,7 +304,7 @@
       "ctor": "Float64Array",
       "array": [
         0,
-        -125.362,
+        -209.095,
         0,
         0,
         0,
@@ -702,8 +702,8 @@
       "__id__": 7
     },
     "_enabled": true,
-    "showDuration": 0.2,
-    "showDelay": 0.2,
+    "showDuration": 0.3,
+    "showDelay": 0.4,
     "showEasing": 23,
     "showFromScale": {
       "__type__": "cc.Vec2",
@@ -715,8 +715,8 @@
       "x": 1,
       "y": 1
     },
-    "hideDuration": 0.15,
-    "hideDelay": 0,
+    "hideDuration": 0.2,
+    "hideDelay": 0.1,
     "hideEasing": 0,
     "hideFromScale": {
       "__type__": "cc.Vec2",
@@ -766,10 +766,13 @@
       },
       {
         "__id__": 31
+      },
+      {
+        "__id__": 32
       }
     ],
     "_prefab": {
-      "__id__": 32
+      "__id__": 33
     },
     "_opacity": 255,
     "_color": {
@@ -793,8 +796,8 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        0,
-        -254.033,
+        -483.91999999999996,
+        -236,
         0,
         0,
         0,
@@ -1205,8 +1208,8 @@
       "x": 1,
       "y": 1
     },
-    "hideDuration": 0.15,
-    "hideDelay": 0,
+    "hideDuration": 0.2,
+    "hideDelay": 0.2,
     "hideEasing": 0,
     "hideFromScale": {
       "__type__": "cc.Vec2",
@@ -1218,6 +1221,35 @@
       "x": 0,
       "y": 0
     },
+    "_id": ""
+  },
+  {
+    "__type__": "cc.Widget",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 20
+    },
+    "_enabled": true,
+    "alignMode": 1,
+    "_target": {
+      "__id__": 1
+    },
+    "_alignFlags": 12,
+    "_left": 0.03,
+    "_right": 0,
+    "_top": 0,
+    "_bottom": 0.1,
+    "_verticalCenter": 0,
+    "_horizontalCenter": 0,
+    "_isAbsLeft": false,
+    "_isAbsRight": true,
+    "_isAbsTop": true,
+    "_isAbsBottom": false,
+    "_isAbsHorizontalCenter": true,
+    "_isAbsVerticalCenter": true,
+    "_originalWidth": 0,
+    "_originalHeight": 0,
     "_id": ""
   },
   {
@@ -1279,7 +1311,7 @@
     },
     "_enabled": true,
     "uiRef": {
-      "__id__": 36
+      "__id__": 37
     },
     "_id": ""
   },
