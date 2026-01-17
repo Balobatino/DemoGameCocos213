@@ -39,13 +39,13 @@ export class TypedEvent<T> {
      */
     invoke(arg: T): void {
         if (this.listeners.size === 0) return;
-        for (const l of Array.from(this.listeners)) {
+        this.listeners.forEach((l) => {
             try {
                 l(arg);
             } catch (e) {
                 console.error("TypedEvent listener error:", e);
             }
-        }
+        });
     }
 
     /**

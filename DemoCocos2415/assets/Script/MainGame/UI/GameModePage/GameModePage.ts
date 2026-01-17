@@ -1,6 +1,7 @@
 import { Singleton } from "../../../Standard/Singleton";
 import { UIPage } from "../../../Standard/UIPage/UIPage";
 import { GameMainPage } from "../GameMainPage";
+import { LevelSelectPage } from "../LevelSelectPage/LevelSelectPage";
 
 const { ccclass, property } = cc._decorator;
 
@@ -140,14 +141,47 @@ export class GameModePage extends Singleton<GameModePage> {
 
     private onEasyModeClicked(): void {
         console.log("GameModePage: Easy Mode selected");
+        this.navigateToLevelSelect();
     }
 
     private onMediumModeClicked(): void {
         console.log("GameModePage: Medium Mode selected");
+        this.navigateToLevelSelect();
     }
 
     private onHardModeClicked(): void {
         console.log("GameModePage: Hard Mode selected");
+        this.navigateToLevelSelect();
+    }
+
+    /**
+     * Hides this page and opens the Level Select page after a 75% hide duration delay.
+     */
+    private navigateToLevelSelect(): void {
+        const uiPage = this.getUiPage();
+
+        if (!uiPage) {
+            console.warn("GameModePage: UIPage component not found; cannot call hide().");
+            return;
+        }
+
+        uiPage.hide();
+
+        const delay = uiPage.getHideDuration() * 0.75;
+        this.scheduleOnce(() => {
+            const levelSelectPage = LevelSelectPage.getInstance<LevelSelectPage>();
+            if (!levelSelectPage) {
+                console.warn("LevelSelectPage singleton instance not found.");
+                return;
+            }
+
+            const levelUiPage = levelSelectPage.getUiPage();
+            if (levelUiPage) {
+                levelUiPage.show();
+            } else {
+                console.warn("LevelSelectPage: UIPage component not found; cannot call show().");
+            }
+        }, delay);
     }
 
     //------------------------------
