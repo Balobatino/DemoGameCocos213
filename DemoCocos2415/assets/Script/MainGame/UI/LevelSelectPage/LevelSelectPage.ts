@@ -3,6 +3,8 @@ import { UIPage } from "../../../Standard/UIPage/UIPage";
 import { GameMainPage } from "../GameMainPage";
 import { GameModePage } from "../GameModePage/GameModePage";
 import { LevelSelectItem } from "./LevelSelectItem";
+import GameStats from "../../GameStats/GameStats";
+import { UserScoreLoadSave } from "../../../UserScoreLoadSave/UserScoreLoadSave";
 const { ccclass, property } = cc._decorator;
 
 /**
@@ -43,6 +45,12 @@ export class LevelSelectPage extends Singleton<LevelSelectPage> {
     // Cached list of LevelSelectItem components for quick lookup.
     private gameLevelSelectItems: LevelSelectItem[] = [];
 
+    // Current difficulty mode index (e.g., 0 for Easy, 1 for Normal, 2 for Hard).
+    private currentDifficultMode = -1;
+
+    // Current progress (last unlocked level index) for the selected difficulty mode.
+    private currentProgress = 0;
+
     //------------------------------
     //--- Lifecycle Methods
     protected doOnLoad(): void {
@@ -54,7 +62,30 @@ export class LevelSelectPage extends Singleton<LevelSelectPage> {
     //------------------------------
     //--- Public Methods
     /**
-     * Return the cached UIPage instance, or null when not available.
+     **
+     * Sets the current difficulty mode and updates the level locked status.
+     * @param mode - difficulty mode index (0: Easy, 1: Normal, 2: Hard)
+     */
+    public setDifficultMode(mode: number): void {
+        this.currentDifficultMode = mode;
+        this.currentProgress = UserScoreLoadSave.getScore(mode);
+        this.refreshLevelItemLockedStatus();
+    }
+
+    /**
+     * Iterates through all level items and updates their locked/unlocked visual state
+     * based on the player's saved progress for the current difficulty mode.
+     */
+    public refreshLevelItemLockedStatus(): void {
+        // update the progress according to current difficult mode
+        this.currentProgress = UserScoreLoadSave.getScore(this.currentDifficultMode);
+        // update each item's lock status
+        for (const item of this.gameLevelSelectItems) {
+            item.setActiveLock(item.levelIndex > this.currentProgress);
+        }
+    }
+
+    /* Return the cached UIPage instance, or null when not available.
      */
     public getUiPage(): UIPage | null {
         return this.uiPage;
@@ -146,7 +177,7 @@ export class LevelSelectPage extends Singleton<LevelSelectPage> {
             if (this.itemUnsubscribes.has(item)) continue;
 
             // Set level index according to the order in the list
-            item.setInfo(i);
+            item.setLevelIndex(i);
 
             const unsubscribe = item.onSelected.add((levelIndex: number) => {
                 this.onItemSelected(levelIndex, item);
@@ -165,10 +196,9 @@ export class LevelSelectPage extends Singleton<LevelSelectPage> {
             console.warn("GameLevelSelectPage: UIPage component not found; cannot call hide().");
         }
 
-        // TODO: Save select level index to GameStats and reset stats for new game
-        // This is currently commented out to fix compile errors until GameStats is implemented/configured.
-        // GameStats.selectLevelIndex = levelIndex;
-        // GameStats.resetStatsForNewGame();
+        // Save select level index to GameStats and reset stats for new game
+        GameStats.userSelect.selectLevel = levelIndex;
+        GameStats.resetStatsForNewGame();
     }
 
     //------------------------------

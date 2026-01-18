@@ -14,6 +14,12 @@ export class UIReference {
 
     @property(cc.Node)
     public lockedIcon: cc.Node = null;
+
+    @property(cc.Node)
+    public backgroundLocked: cc.Node = null;
+
+    @property(cc.Node)
+    public backgroundUnlocked: cc.Node = null;
 }
 
 /**
@@ -61,7 +67,7 @@ export class LevelSelectItem extends cc.Component {
      * Set basic info for this level item.
      * @param index - zero-based level index
      */
-    public setInfo(index: number): void {
+    public setLevelIndex(index: number): void {
         this.levelIndex = index;
 
         if (this.uiRef.levelLabel) {
@@ -78,6 +84,18 @@ export class LevelSelectItem extends cc.Component {
     public setActiveLock(isLocked: boolean): void {
         if (this.uiRef.lockedIcon) {
             this.uiRef.lockedIcon.active = isLocked;
+        }
+
+        if (this.uiRef.backgroundLocked) {
+            this.uiRef.backgroundLocked.active = isLocked;
+        }
+
+        if (this.uiRef.backgroundUnlocked) {
+            this.uiRef.backgroundUnlocked.active = !isLocked;
+        }
+
+        if (this.uiRef.levelLabel) {
+            this.uiRef.levelLabel.node.active = !isLocked;
         }
 
         if (this.uiRef.selectButton) {

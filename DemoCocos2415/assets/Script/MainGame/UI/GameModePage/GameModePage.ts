@@ -2,6 +2,7 @@ import { Singleton } from "../../../Standard/Singleton";
 import { UIPage } from "../../../Standard/UIPage/UIPage";
 import { GameMainPage } from "../GameMainPage";
 import { LevelSelectPage } from "../LevelSelectPage/LevelSelectPage";
+import GameStats, { DifficultMode } from "../../GameStats/GameStats";
 
 const { ccclass, property } = cc._decorator;
 
@@ -141,29 +142,32 @@ export class GameModePage extends Singleton<GameModePage> {
 
     private onEasyModeClicked(): void {
         console.log("GameModePage: Easy Mode selected");
-        this.navigateToLevelSelect();
+        this.navigateToLevelSelect(DifficultMode.Easy);
     }
 
     private onMediumModeClicked(): void {
         console.log("GameModePage: Medium Mode selected");
-        this.navigateToLevelSelect();
+        this.navigateToLevelSelect(DifficultMode.Normal);
     }
 
     private onHardModeClicked(): void {
         console.log("GameModePage: Hard Mode selected");
-        this.navigateToLevelSelect();
+        this.navigateToLevelSelect(DifficultMode.Hard);
     }
 
     /**
      * Hides this page and opens the Level Select page after a 75% hide duration delay.
+     * @param mode - selected difficulty mode
      */
-    private navigateToLevelSelect(): void {
+    private navigateToLevelSelect(mode: DifficultMode): void {
         const uiPage = this.getUiPage();
-
         if (!uiPage) {
             console.warn("GameModePage: UIPage component not found; cannot call hide().");
             return;
         }
+
+        // update global selection state
+        GameStats.userSelect.difficultMode = mode;
 
         uiPage.hide();
 
@@ -174,6 +178,9 @@ export class GameModePage extends Singleton<GameModePage> {
                 console.warn("LevelSelectPage singleton instance not found.");
                 return;
             }
+
+            // call LevelSelectItem.ts to setDifficultMode (actually on LevelSelectPage)
+            levelSelectPage.setDifficultMode(mode);
 
             const levelUiPage = levelSelectPage.getUiPage();
             if (levelUiPage) {
