@@ -4,7 +4,7 @@ const { ccclass, property } = cc._decorator;
  * Difficulty modes for the game.
  */
 export enum DifficultMode {
-    Easy,
+    Easy = 0,
     Normal,
     Hard,
 }
