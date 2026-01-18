@@ -28,10 +28,13 @@
       },
       {
         "__id__": 7
+      },
+      {
+        "__id__": 9
       }
     ],
     "_prefab": {
-      "__id__": 9
+      "__id__": 11
     },
     "_opacity": 255,
     "_color": {
@@ -296,6 +299,27 @@
     "uiReference": {
       "__id__": 8
     },
+    "instrumentType": 4,
+    "_id": ""
+  },
+  {
+    "__type__": "InstrumentButtonUIReference",
+    "button": {
+      "__id__": 6
+    }
+  },
+  {
+    "__type__": "e6ec0ZwkGBHiLl4ChFTE0lO",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 1
+    },
+    "_enabled": true,
+    "uiReference": {
+      "__id__": 10
+    },
+    "instrumentType": 2,
     "_id": ""
   },
   {

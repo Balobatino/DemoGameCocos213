@@ -1,3 +1,4 @@
+import { InstrumentType } from "../../Data/InstrumentAudioStorage";
 const { ccclass, property } = cc._decorator;
 
 @ccclass("InstrumentButtonUIReference")
@@ -14,4 +15,7 @@ export class InstrumentButtonUIReference {
 export default class InstrumentButton extends cc.Component {
     @property({ type: InstrumentButtonUIReference })
     public uiReference: InstrumentButtonUIReference = new InstrumentButtonUIReference();
+
+    @property({ type: InstrumentType })
+    public instrumentType: InstrumentType = InstrumentType.Piano;
 }
