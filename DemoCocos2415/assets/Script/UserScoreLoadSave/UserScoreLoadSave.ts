@@ -75,4 +75,25 @@ export class UserScoreLoadSave {
     private static getStorageKey(modeName: string): string {
         return this.STORAGE_KEY_PREFIX + modeName;
     }
+
+    //----------------------------------------
+    //------- Cheat Methods
+
+    /**
+     * Cheat: Unlock/finish all difficulty modes by setting progress to 10.
+     */
+    public static cheatFinishAllMode(): void {
+        for (let i = 0; i < this.DIFFICULT_PREFIXES.length; i++) {
+            this.saveScore(i, 10);
+        }
+    }
+
+    /**
+     * Cheat: Reset all difficulty modes by setting progress to 0.
+     */
+    public static cheatResetAllMode(): void {
+        for (let i = 0; i < this.DIFFICULT_PREFIXES.length; i++) {
+            this.saveScore(i, 0);
+        }
+    }
 }
