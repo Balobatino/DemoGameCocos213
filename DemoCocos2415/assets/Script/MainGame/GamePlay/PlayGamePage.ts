@@ -16,6 +16,10 @@ export class UIReference {
 
     @property({ type: cc.Layout })
     public rootInstrument: cc.Layout | null = null;
+
+    // blockInputEvent
+    @property({ type: cc.BlockInputEvents })
+    public inputBlocker: cc.BlockInputEvents | null = null;
 }
 
 /**
@@ -125,6 +129,9 @@ export class PlayGamePage extends Singleton<PlayGamePage> {
         }
     }
 
+    //-------------------------------
+    //--- Button Handlers
+
     private registerButtonHandlers(): void {
         // Back button
         const backBtn = this.uiRef.backButton;
@@ -170,6 +177,17 @@ export class PlayGamePage extends Singleton<PlayGamePage> {
         }, delay);
     }
 
+    //------------------------------
+    //--- Start game sequence
+
+    public async runStartGameProcess(): Promise<void> {
+        //
+    }
+
+    // Small helper to await a number of milliseconds.
+    private sleep(milliseconds: number): Promise<void> {
+        return new Promise((resolve) => setTimeout(resolve, milliseconds));
+    }
     //------------------------------
     //--- Cleanup
 
