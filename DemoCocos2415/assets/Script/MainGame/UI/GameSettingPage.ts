@@ -2,6 +2,7 @@ import { Singleton } from "../../Standard/Singleton";
 import { UIPage } from "../../Standard/UIPage/UIPage";
 import { GameMainPage } from "./GameMainPage";
 import { AudioManager } from "../../Standard/Audio/AudioManager"; // for reading/setting mute state
+import { UserScoreLoadSave } from "../../UserScoreLoadSave/UserScoreLoadSave";
 const { ccclass, property } = cc._decorator;
 
 /**
@@ -23,6 +24,12 @@ export class UIReference {
 
     @property({ type: cc.Toggle })
     public muteSfxToggle: cc.Toggle | null = null;
+
+    @property({ type: cc.Button })
+    public cheatAll: cc.Button | null = null;
+
+    @property({ type: cc.Button })
+    public cheatZero: cc.Button | null = null;
 }
 
 /**
@@ -116,6 +123,18 @@ export class GameSettingPage extends Singleton<GameSettingPage> {
         } else {
             console.warn("GameSettingPage: muteSfxToggle is not assigned in the inspector (uiRef.muteSfxToggle).");
         }
+
+        // Cheat All button
+        const cheatAllBtn = this.uiRef.cheatAll;
+        if (cheatAllBtn) {
+            cheatAllBtn.node.on(cc.Node.EventType.TOUCH_END, this.onCheatAllButtonClicked, this);
+        }
+
+        // Cheat Zero button
+        const cheatZeroBtn = this.uiRef.cheatZero;
+        if (cheatZeroBtn) {
+            cheatZeroBtn.node.on(cc.Node.EventType.TOUCH_END, this.onCheatZeroButtonClicked, this);
+        }
     }
 
     /**
@@ -184,6 +203,24 @@ export class GameSettingPage extends Singleton<GameSettingPage> {
     }
 
     /**
+     * Handler for the Cheat All button click event.
+     * Unlocks all levels by setting progress to max.
+     */
+    private onCheatAllButtonClicked(): void {
+        console.log("GameSettingPage: Cheat All clicked.");
+        UserScoreLoadSave.cheatFinishAllMode();
+    }
+
+    /**
+     * Handler for the Cheat Zero button click event.
+     * Resets all levels progress to zero.
+     */
+    private onCheatZeroButtonClicked(): void {
+        console.log("GameSettingPage: Cheat Zero clicked.");
+        UserScoreLoadSave.cheatResetAllMode();
+    }
+
+    /**
      * Handler for the Close button click event.
      * Currently logs a message; actual close/hide logic to be implemented.
      */
@@ -241,6 +278,16 @@ export class GameSettingPage extends Singleton<GameSettingPage> {
         const muteSfx = this.uiRef.muteSfxToggle;
         if (muteSfx) {
             muteSfx.node.off(GameSettingPage.TOGGLE_EVENT, this.onMuteSfxToggled, this);
+        }
+
+        const cheatAllBtn = this.uiRef.cheatAll;
+        if (cheatAllBtn) {
+            cheatAllBtn.node.off(cc.Node.EventType.TOUCH_END, this.onCheatAllButtonClicked, this);
+        }
+
+        const cheatZeroBtn = this.uiRef.cheatZero;
+        if (cheatZeroBtn) {
+            cheatZeroBtn.node.off(cc.Node.EventType.TOUCH_END, this.onCheatZeroButtonClicked, this);
         }
     }
 }
