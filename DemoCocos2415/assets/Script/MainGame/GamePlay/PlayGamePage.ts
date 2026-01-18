@@ -1,3 +1,5 @@
+import InstrumentAudioStorage from "../../Data/InstrumentAudioStorage";
+import LevelDataStorage from "../../Data/LevelDataStorage";
 import { Singleton } from "../../Standard/Singleton";
 import { UIPage } from "../../Standard/UIPage/UIPage";
 import { LevelSelectPage } from "../UI/LevelSelectPage/LevelSelectPage";
@@ -26,6 +28,12 @@ export class Data {
 
     @property({ type: cc.Float })
     public instrumentDisplayWidth: number = 0;
+
+    @property({ type: cc.Prefab })
+    public InstrumentAudioStoragePrefab: cc.Prefab = null;
+
+    @property({ type: cc.Prefab })
+    public levelStorage: cc.Prefab = null;
 }
 
 /**
@@ -48,6 +56,9 @@ export class PlayGamePage extends Singleton<PlayGamePage> {
     // Cached UIPage component for the play game page.
     private uiPage: UIPage | null = null;
 
+    private levelDataStorage: LevelDataStorage | null = null;
+    private instrumentAudioStorage: InstrumentAudioStorage | null = null;
+
     //------------------------------
     //--- Lifecycle Methods
 
@@ -57,6 +68,7 @@ export class PlayGamePage extends Singleton<PlayGamePage> {
      */
     protected doOnLoad(): void {
         this.cacheComponents();
+        this.retrieveDataComponent();
         this.registerButtonHandlers();
     }
 
@@ -85,6 +97,31 @@ export class PlayGamePage extends Singleton<PlayGamePage> {
 
         if (!this.uiPage) {
             console.error(`PlayGamePage: UIPage component not found on node "${this.node.name}" or its children.`);
+        }
+    }
+
+    /**
+     * Retrieves data components from the assigned prefabs in the inspector.
+     */
+    private retrieveDataComponent(): void {
+        // Retrieve LevelDataStorage from prefab
+        if (this.data.levelStorage) {
+            this.levelDataStorage = this.data.levelStorage.data.getComponent(LevelDataStorage);
+        } else {
+            console.error("PlayGamePage: levelStorage prefab is not assigned in the inspector.");
+        }
+        if (!this.levelDataStorage) {
+            console.error("PlayGamePage: LevelDataStorage component not found on the assigned levelStorage prefab.");
+        }
+
+        // Retrieve InstrumentAudioStorage from prefab
+        if (this.data.InstrumentAudioStoragePrefab) {
+            this.instrumentAudioStorage = this.data.InstrumentAudioStoragePrefab.data.getComponent(InstrumentAudioStorage);
+        } else {
+            console.error("PlayGamePage: InstrumentAudioStoragePrefab is not assigned in the inspector.");
+        }
+        if (!this.instrumentAudioStorage) {
+            console.error("PlayGamePage: InstrumentAudioStorage component not found on the assigned InstrumentAudioStoragePrefab.");
         }
     }
 
