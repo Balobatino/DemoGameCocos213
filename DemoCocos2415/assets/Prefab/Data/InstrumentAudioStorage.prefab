@@ -1,0 +1,159 @@
+[
+  {
+    "__type__": "cc.Prefab",
+    "_name": "",
+    "_objFlags": 0,
+    "_native": "",
+    "data": {
+      "__id__": 1
+    },
+    "optimizationPolicy": 0,
+    "asyncLoadAssets": false,
+    "readonly": false
+  },
+  {
+    "__type__": "cc.Node",
+    "_name": "InstrumentAudioStorage",
+    "_objFlags": 0,
+    "_parent": null,
+    "_children": [],
+    "_active": true,
+    "_components": [
+      {
+        "__id__": 2
+      }
+    ],
+    "_prefab": {
+      "__id__": 9
+    },
+    "_opacity": 255,
+    "_color": {
+      "__type__": "cc.Color",
+      "r": 255,
+      "g": 255,
+      "b": 255,
+      "a": 255
+    },
+    "_contentSize": {
+      "__type__": "cc.Size",
+      "width": 0,
+      "height": 0
+    },
+    "_anchorPoint": {
+      "__type__": "cc.Vec2",
+      "x": 0.5,
+      "y": 0.5
+    },
+    "_trs": {
+      "__type__": "TypedArray",
+      "ctor": "Float64Array",
+      "array": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    "_eulerAngles": {
+      "__type__": "cc.Vec3",
+      "x": 0,
+      "y": 0,
+      "z": 0
+    },
+    "_skewX": 0,
+    "_skewY": 0,
+    "_is3DNode": false,
+    "_groupIndex": 0,
+    "groupIndex": 0,
+    "_id": ""
+  },
+  {
+    "__type__": "dc241M4gjRDY5ufWsr2uBtG",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 1
+    },
+    "_enabled": true,
+    "audioDataList": [
+      {
+        "__id__": 3
+      },
+      {
+        "__id__": 4
+      },
+      {
+        "__id__": 5
+      },
+      {
+        "__id__": 6
+      },
+      {
+        "__id__": 7
+      },
+      {
+        "__id__": 8
+      }
+    ],
+    "_id": ""
+  },
+  {
+    "__type__": "AudioData",
+    "instrument": 1,
+    "audioData": {
+      "__uuid__": "f39d8d75-8129-4119-893a-fa760373f324"
+    }
+  },
+  {
+    "__type__": "AudioData",
+    "instrument": 2,
+    "audioData": {
+      "__uuid__": "0e4ff439-5698-4e90-8dbc-4f3947feb3dc"
+    }
+  },
+  {
+    "__type__": "AudioData",
+    "instrument": 3,
+    "audioData": {
+      "__uuid__": "02f84179-7773-477e-ba6d-0a9443f29196"
+    }
+  },
+  {
+    "__type__": "AudioData",
+    "instrument": 4,
+    "audioData": {
+      "__uuid__": "89b8491a-f233-4544-bcdc-1707e8b9bb8e"
+    }
+  },
+  {
+    "__type__": "AudioData",
+    "instrument": 5,
+    "audioData": {
+      "__uuid__": "8436e701-e977-4c0a-9ff3-fa7f50f772e6"
+    }
+  },
+  {
+    "__type__": "AudioData",
+    "instrument": 6,
+    "audioData": {
+      "__uuid__": "c8a426c0-3d4c-430b-9a72-f0d14f476fe5"
+    }
+  },
+  {
+    "__type__": "cc.PrefabInfo",
+    "root": {
+      "__id__": 1
+    },
+    "asset": {
+      "__id__": 0
+    },
+    "fileId": "",
+    "sync": false
+  }
+]
