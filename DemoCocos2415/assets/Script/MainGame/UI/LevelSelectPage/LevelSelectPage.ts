@@ -5,6 +5,7 @@ import { GameModePage } from "../GameModePage/GameModePage";
 import { LevelSelectItem } from "./LevelSelectItem";
 import GameStats from "../../GameStats/GameStats";
 import { UserScoreLoadSave } from "../../../UserScoreLoadSave/UserScoreLoadSave";
+import { PlayGamePage } from "../../GamePlay/PlayGamePage";
 const { ccclass, property } = cc._decorator;
 
 /**
@@ -192,6 +193,24 @@ export class LevelSelectPage extends Singleton<LevelSelectPage> {
         } else {
             console.warn("GameLevelSelectPage: UIPage component not found; cannot call hide().");
         }
+
+        // open the PlayGamePage after a delay
+        const delay = uiPage ? uiPage.getHideDuration() * 0.75 : 0;
+        this.scheduleOnce(() => {
+            const playGamePage = PlayGamePage.getInstance<PlayGamePage>();
+            if (!playGamePage) {
+                console.warn("LevelSelectPage: PlayGamePage singleton instance not found.");
+                return;
+            }
+
+            const playUiPage = playGamePage.getUiPage();
+            if (playUiPage) {
+                playUiPage.show();
+                void playGamePage.runStartGameProcess();
+            } else {
+                console.warn("PlayGamePage: UIPage component not found; cannot call show().");
+            }
+        }, delay);
 
         // Save select level index to GameStats and reset stats for new game
         GameStats.userSelect.selectLevel = levelIndex;
