@@ -65,7 +65,6 @@ export default class InstrumentAudioStorage extends cc.Component {
         }
 
         const clip = this._audioMap.get(instrument);
-
         if (!clip) {
             console.warn(`InstrumentAudioStorage: No AudioClip found for instrument: ${InstrumentType[instrument]}`);
             return null;
@@ -79,14 +78,22 @@ export default class InstrumentAudioStorage extends cc.Component {
      */
     private initializeAudioMap(): void {
         this._audioMap = new Map<InstrumentType, cc.AudioClip>();
-
         if (!this.audioDataList) return;
 
         for (const data of this.audioDataList) {
-            if (data.instrument !== InstrumentType.None && data.audioData) {
-                // If there are duplicate types, the last one in the list will be used.
-                this._audioMap.set(data.instrument, data.audioData);
+            // Guard: skip empty entries or invalid instruments.
+            if (data.instrument === InstrumentType.None || !data.audioData) {
+                console.warn(`InstrumentAudioStorage: Skipping invalid entry with instrument: ${InstrumentType[data.instrument]}`);
+                continue;
             }
+
+            // Guard: check for duplicate instrument keys in the configuration.
+            if (this._audioMap.has(data.instrument)) {
+                console.warn(`InstrumentAudioStorage: Duplicate configuration found for instrument: ${InstrumentType[data.instrument]}. Keeping the first entry.`);
+                continue;
+            }
+
+            this._audioMap.set(data.instrument, data.audioData);
         }
     }
 }
