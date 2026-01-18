@@ -45,9 +45,6 @@ export class LevelSelectPage extends Singleton<LevelSelectPage> {
     // Cached list of LevelSelectItem components for quick lookup.
     private gameLevelSelectItems: LevelSelectItem[] = [];
 
-    // Current difficulty mode index (e.g., 0 for Easy, 1 for Normal, 2 for Hard).
-    private currentDifficultMode = -1;
-
     // Current progress (last unlocked level index) for the selected difficulty mode.
     private currentProgress = 0;
 
@@ -63,11 +60,10 @@ export class LevelSelectPage extends Singleton<LevelSelectPage> {
     //--- Public Methods
     /**
      **
-     * Sets the current difficulty mode and updates the level locked status.
-     * @param mode - difficulty mode index (0: Easy, 1: Normal, 2: Hard)
+     * Handler for when the difficulty mode changes. Updates the level locked status.
      */
-    public setDifficultMode(mode: number): void {
-        this.currentDifficultMode = mode;
+    public onDifficultModeChanged(): void {
+        const mode = GameStats.userSelect.difficultMode;
         this.currentProgress = UserScoreLoadSave.getScore(mode);
         this.refreshLevelItemLockedStatus();
     }
@@ -78,7 +74,8 @@ export class LevelSelectPage extends Singleton<LevelSelectPage> {
      */
     public refreshLevelItemLockedStatus(): void {
         // update the progress according to current difficult mode
-        this.currentProgress = UserScoreLoadSave.getScore(this.currentDifficultMode);
+        const mode = GameStats.userSelect.difficultMode;
+        this.currentProgress = UserScoreLoadSave.getScore(mode);
         // update each item's lock status
         for (const item of this.gameLevelSelectItems) {
             item.setActiveLock(item.levelIndex > this.currentProgress);

@@ -179,8 +179,8 @@ export class GameModePage extends Singleton<GameModePage> {
                 return;
             }
 
-            // call LevelSelectItem.ts to setDifficultMode (actually on LevelSelectPage)
-            levelSelectPage.setDifficultMode(mode);
+            // Notify LevelSelectPage that the difficulty mode has changed
+            levelSelectPage.onDifficultModeChanged();
 
             const levelUiPage = levelSelectPage.getUiPage();
             if (levelUiPage) {
