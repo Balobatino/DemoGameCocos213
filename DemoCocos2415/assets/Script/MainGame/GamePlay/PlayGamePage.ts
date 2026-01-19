@@ -1,9 +1,12 @@
 import InstrumentAudioStorage from "../../Data/InstrumentAudioStorage";
 import LevelDataStorage from "../../Data/LevelDataStorage";
 import { Singleton } from "../../Standard/Singleton";
-import { EasingType } from "../../Standard/UIPage/ElementAnimation/AnimationMapCache";
+import { EasingType, EasingMap } from "../../Standard/UIPage/ElementAnimation/AnimationMapCache";
 import { UIPage } from "../../Standard/UIPage/UIPage";
 import { LevelSelectPage } from "../UI/LevelSelectPage/LevelSelectPage";
+import GameStats from "../GameStats/GameStats";
+import { CollectionUtils } from "../../Utils/CollectionUtils";
+import InstrumentButton from "./InstrumentButton";
 
 const { ccclass, property } = cc._decorator;
 
@@ -72,6 +75,9 @@ export class PlayGamePage extends Singleton<PlayGamePage> {
 
     private levelStorage: LevelDataStorage | null = null;
     private insAudioStorage: InstrumentAudioStorage | null = null;
+
+    // List of active instrument buttons in the current game session.
+    private instrumentButtons: InstrumentButton[] = [];
 
     //------------------------------
     //--- Lifecycle Methods
@@ -187,11 +193,106 @@ export class PlayGamePage extends Singleton<PlayGamePage> {
         }, delay);
     }
 
-    //------------------------------
-    //--- Start game sequence
-
+    /**
+     * Initializes the game session: configures levels, spawns instruments, and plays entry animations.
+     */
     public async runStartGameProcess(): Promise<void> {
-        //
+        // Wait for page show animation to complete
+        if (this.uiPage) {
+            await this.sleep(this.uiPage.getShowDuration() * 1000);
+        }
+
+        // Disable back button while setting up the level
+        if (this.uiRef.backButton) {
+            this.uiRef.backButton.interactable = false;
+        }
+
+        // Retrieve level configuration based on current difficulty mode
+        const mode = GameStats.userSelect.difficultMode;
+        if (!this.levelStorage) return;
+
+        const levelData = this.levelStorage.getLevelConfigForDifficultMode(mode);
+        if (!levelData) return;
+
+        // Clear any existing instruments from previous rounds
+        this.clearInstruments();
+
+        // Determine which instruments to spawn
+        const pickedPrefabs = CollectionUtils.randomPickFromList(this.data.instrumentPrefabs, levelData.numberOfInstruments);
+
+        for (let n = 0; n < pickedPrefabs.length; n++) {
+            const prefab = pickedPrefabs[n];
+            const insNode = cc.instantiate(prefab);
+
+            // Parent to the root layout container
+            if (this.uiRef.rootInstrument) {
+                insNode.parent = this.uiRef.rootInstrument.node;
+            } else {
+                console.error("PlayGamePage: rootInstrument layout is not assigned in the inspector.");
+            }
+
+            const insBtn = insNode.getComponent(InstrumentButton);
+            if (insBtn) {
+                // Initialize instrument state and cache
+                insBtn.indexInGroup = n;
+                this.instrumentButtons.push(insBtn);
+
+                // Register button interaction touch event
+                if (insBtn.uiReference.button) {
+                    insBtn.uiReference.button.node.on(cc.Node.EventType.TOUCH_END, () => this.onInstrument(n), this);
+                } else {
+                    console.warn(`PlayGamePage: InstrumentButton at index ${n} is missing its Button component in uiReference.`);
+                }
+            } else {
+                console.error(`PlayGamePage: InstrumentButton component not found on instantiated prefab at index ${n}.`);
+            }
+
+            // Animate the appearance of the instrument
+            insNode.setScale(0, 0, 1);
+            // Update : Tween per-axis numeric scale properties to avoid NaN produced when assigning a Vec3 directly.
+            cc.tween(insNode)
+                .to(this.insAnimConfig.showDuration, { scaleX: 1, scaleY: 1, scaleZ: 1 }, { easing: EasingMap.get(this.insAnimConfig.showEasing) })
+                .call(() => {
+                    // Animation complete callback (if needed)
+                    // log current scale, current parent of the instrument
+                    console.log(`Instrument ${insNode.name} animation complete. Scale: ${insNode.scale}, Parent: ${insNode.parent?.name}`);
+                })
+                .start();
+        }
+
+        // config size for the root instrument, = number of instruments * instrument width
+        if (this.uiRef.rootInstrument) {
+            const totalWidth = pickedPrefabs.length * this.data.instrumentDisplayWidth;
+            this.uiRef.rootInstrument.node.width = totalWidth;
+            this.uiRef.rootInstrument.updateLayout();
+        }
+
+        // Wait for all instruments to finish scaling in
+        await this.sleep(this.insAnimConfig.showDuration * 1000);
+
+        // Preparation complete, re-enable back navigation
+        if (this.uiRef.backButton) {
+            this.uiRef.backButton.interactable = true;
+        }
+    }
+
+    /**
+     * Handler for instrument button clicks.
+     * @param index - The index of the instrument in the active list.
+     */
+    private onInstrument(index: number): void {
+        // Implementation for note checking/playing logic goes here.
+        console.log(`Instrument index ${index} clicked.`);
+    }
+
+    /**
+     * Destroys existing instrument nodes and clears the internal tracking array.
+     */
+    private clearInstruments(): void {
+        for (const btn of this.instrumentButtons) {
+            if (btn.node) btn.node.destroy();
+        }
+        this.instrumentButtons = [];
     }
 
     // Small helper to await a number of milliseconds.

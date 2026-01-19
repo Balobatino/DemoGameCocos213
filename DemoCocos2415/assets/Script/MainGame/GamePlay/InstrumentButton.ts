@@ -8,7 +8,8 @@ export class InstrumentButtonUIReference {
 }
 
 /**
- * InstrumentButton: Component managing a button for selecting an instrument.
+ * InstrumentButton: attach to Instrument item on scene at mainGame, work with PlayGamePage
+ * handle interaction and events.
  */
 
 @ccclass
@@ -18,4 +19,7 @@ export default class InstrumentButton extends cc.Component {
 
     @property({ type: InstrumentType })
     public instrumentType: InstrumentType = InstrumentType.Piano;
+
+    @property(cc.Integer)
+    public indexInGroup: number = -1;
 }
