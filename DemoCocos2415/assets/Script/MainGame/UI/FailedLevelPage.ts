@@ -2,6 +2,7 @@ import { Singleton } from "../../Standard/Singleton";
 import { UIPage } from "../../Standard/UIPage/UIPage";
 import { GameModePage } from "./GameModePage/GameModePage";
 import { LevelSelectPage } from "./LevelSelectPage/LevelSelectPage";
+import { PlayGamePage } from "../GamePlay/PlayGamePage";
 
 const { ccclass, property } = cc._decorator;
 
@@ -111,11 +112,32 @@ export default class FailedLevelPage extends Singleton<FailedLevelPage> {
     }
 
     /**
-     * Placeholder handler for the Replay button.
+     * Replays the current level by navigating back to PlayGamePage.
      */
     private onReplayClicked(): void {
-        // Logic for replaying the current level will be implemented here.
-        console.log("FailedLevelPage: Replay clicked (logic not yet implemented).");
+        const uiPage = this.getUiPage();
+        if (uiPage) {
+            uiPage.hide();
+        } else {
+            console.warn("FailedLevelPage: UIPage component not found; cannot call hide().");
+        }
+
+        const delay = uiPage ? uiPage.getHideDuration() * 0.75 : 0;
+        this.scheduleOnce(() => {
+            const playGamePage = PlayGamePage.getInstance<PlayGamePage>();
+            if (!playGamePage) {
+                console.warn("FailedLevelPage: PlayGamePage singleton instance not found.");
+                return;
+            }
+
+            const playUiPage = playGamePage.getUiPage();
+            if (playUiPage) {
+                playUiPage.show();
+                void playGamePage.runStartGameProcess();
+            } else {
+                console.warn("FailedLevelPage: PlayGamePage UIPage component not found; cannot call show().");
+            }
+        }, delay);
     }
 
     /**

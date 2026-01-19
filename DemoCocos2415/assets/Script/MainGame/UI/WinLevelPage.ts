@@ -2,6 +2,8 @@ import { Singleton } from "../../Standard/Singleton";
 import { UIPage } from "../../Standard/UIPage/UIPage";
 import { GameModePage } from "./GameModePage/GameModePage";
 import { LevelSelectPage } from "./LevelSelectPage/LevelSelectPage";
+import { PlayGamePage } from "../GamePlay/PlayGamePage";
+import GameStats from "../GameStats/GameStats";
 
 const { ccclass, property } = cc._decorator;
 
@@ -111,11 +113,36 @@ export default class WinLevelPage extends Singleton<WinLevelPage> {
     }
 
     /**
-     * Placeholder handler for the Next Level button.
+     * Navigates to the next level by incrementing selection and re-entering PlayGamePage.
      */
     private onNextLevelClicked(): void {
-        // Logic for transitioning to the next level will be implemented here.
-        console.log("WinLevelPage: Next Level clicked (logic not yet implemented).");
+        // Reset turn progress and increment the level index
+        GameStats.stats.reset();
+        GameStats.userSelect.selectLevel++;
+
+        const uiPage = this.getUiPage();
+        if (uiPage) {
+            uiPage.hide();
+        } else {
+            console.warn("WinLevelPage: UIPage component not found; cannot call hide().");
+        }
+
+        const delay = uiPage ? uiPage.getHideDuration() * 0.75 : 0;
+        this.scheduleOnce(() => {
+            const playGamePage = PlayGamePage.getInstance<PlayGamePage>();
+            if (!playGamePage) {
+                console.warn("WinLevelPage: PlayGamePage singleton instance not found.");
+                return;
+            }
+
+            const playUiPage = playGamePage.getUiPage();
+            if (playUiPage) {
+                playUiPage.show();
+                void playGamePage.runStartGameProcess();
+            } else {
+                console.warn("WinLevelPage: PlayGamePage UIPage component not found; cannot call show().");
+            }
+        }, delay);
     }
 
     /**
