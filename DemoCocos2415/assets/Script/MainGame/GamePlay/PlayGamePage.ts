@@ -236,11 +236,6 @@ export class PlayGamePage extends Singleton<PlayGamePage> {
                 console.error("PlayGamePage: rootInstrument layout is not assigned in the inspector.");
             }
 
-            // insNode.setParent(this.node);
-            // let position = cc.Vec3.ZERO;
-            // position.x = n * this.data.instrumentDisplayWidth;
-            // insNode.setPosition(position);
-
             const insBtn = insNode.getComponent(InstrumentButton);
             if (insBtn) {
                 // Initialize instrument state and cache
@@ -257,30 +252,35 @@ export class PlayGamePage extends Singleton<PlayGamePage> {
                 console.error(`PlayGamePage: InstrumentButton component not found on instantiated prefab at index ${n}.`);
             }
 
-            // Animate the appearance of the instrument
+            // Immediately set to scale 0 to hide it before the animation pass
             insNode.setScale(0, 0, 1);
-            // console.log(`Instrument ${insNode.name} animation start. Scale: ${insNode.scale}, size ${insNode.getContentSize()}, Parent: ${insNode.parent?.name}`);
-
-            // Update : Tween per-axis numeric scale properties to avoid NaN produced when assigning a Vec3 directly.
-            const t = cc
-                .tween(insNode)
-                .to(this.insAnimConfig.showDuration, { scaleX: 1, scaleY: 1, scaleZ: 1 }, { easing: EasingMap.get(this.insAnimConfig.showEasing) })
-                .call(() => {
-                    // // Animation complete callback (if needed)
-                    // console.log(`Instrument ${insNode.name} animation complete. Scale: ${insNode.scale}, size ${insNode.getContentSize()}, Parent: ${insNode.parent?.name}`);
-                });
-            t.start();
         }
 
-        // config size for the root instrument, = number of instruments * instrument width
-        if (this.uiRef.rootInstrument) {
+        // config size and force a layout update so positions are finalized before animating
+        const layout = this.uiRef.rootInstrument;
+        if (layout) {
             const totalWidth = pickedPrefabs.length * this.data.instrumentDisplayWidth;
-            this.uiRef.rootInstrument.node.width = totalWidth;
-            this.uiRef.rootInstrument.updateLayout();
+            layout.node.width = totalWidth;
+            layout.updateLayout();
+        }
+
+        // Retrieve easing once to avoid map lookup in the loop
+        const easing = EasingMap.get(this.insAnimConfig.showEasing);
+        // Animate the appearance of all instruments
+        for (const insBtn of this.instrumentButtons) {
+            if (!insBtn.node) continue;
+            // Stop any conflicting tweens and enforce the starting scale inside the tween
+            cc.Tween.stopAllByTarget(insBtn.node);
+            cc.tween(insBtn.node).set({ scaleX: 0, scaleY: 0, scaleZ: 1 }).to(this.insAnimConfig.showDuration, { scaleX: 1, scaleY: 1, scaleZ: 1 }, { easing }).start();
         }
 
         // Wait for all instruments to finish scaling in
         await this.sleep(this.insAnimConfig.showDuration * 1000);
+
+        // Re-enable layout so it can handle any future structural changes
+        if (layout) {
+            layout.enabled = true;
+        }
 
         // Preparation complete, re-enable back navigation
         if (this.uiRef.backButton) {
