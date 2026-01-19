@@ -1,6 +1,7 @@
 import InstrumentAudioStorage from "../../Data/InstrumentAudioStorage";
 import LevelDataStorage from "../../Data/LevelDataStorage";
 import { Singleton } from "../../Standard/Singleton";
+import { EasingType } from "../../Standard/UIPage/ElementAnimation/AnimationMapCache";
 import { UIPage } from "../../Standard/UIPage/UIPage";
 import { LevelSelectPage } from "../UI/LevelSelectPage/LevelSelectPage";
 
@@ -16,10 +17,6 @@ export class UIReference {
 
     @property({ type: cc.Layout })
     public rootInstrument: cc.Layout | null = null;
-
-    // blockInputEvent
-    @property({ type: cc.BlockInputEvents })
-    public inputBlocker: cc.BlockInputEvents | null = null;
 }
 
 /**
@@ -40,6 +37,16 @@ export class Data {
     public levelStorage: cc.Prefab = null;
 }
 
+// class InstrumentAnimationConfig
+@ccclass("InstrumentAnimationConfig")
+export class InstrumentAnimationConfig {
+    @property(cc.Float)
+    public showDuration: number = 0.3;
+
+    @property({ type: cc.Enum(EasingType) })
+    public showEasing: EasingType = EasingType.BackOut;
+}
+
 /**
  * PlayGamePage: Singleton that manages the gameplay UI and state.
  */
@@ -55,13 +62,16 @@ export class PlayGamePage extends Singleton<PlayGamePage> {
     @property({ type: Data })
     public data: Data = new Data();
 
+    @property({ type: InstrumentAnimationConfig })
+    public insAnimConfig: InstrumentAnimationConfig = new InstrumentAnimationConfig();
+
     //------------------------------
     //--- Private Properties
     // Cached UIPage component for the play game page.
     private uiPage: UIPage | null = null;
 
-    private levelDataStorage: LevelDataStorage | null = null;
-    private instrumentAudioStorage: InstrumentAudioStorage | null = null;
+    private levelStorage: LevelDataStorage | null = null;
+    private insAudioStorage: InstrumentAudioStorage | null = null;
 
     //------------------------------
     //--- Lifecycle Methods
@@ -110,21 +120,21 @@ export class PlayGamePage extends Singleton<PlayGamePage> {
     private retrieveDataComponent(): void {
         // Retrieve LevelDataStorage from prefab
         if (this.data.levelStorage) {
-            this.levelDataStorage = this.data.levelStorage.data.getComponent(LevelDataStorage);
+            this.levelStorage = this.data.levelStorage.data.getComponent(LevelDataStorage);
         } else {
             console.error("PlayGamePage: levelStorage prefab is not assigned in the inspector.");
         }
-        if (!this.levelDataStorage) {
+        if (!this.levelStorage) {
             console.error("PlayGamePage: LevelDataStorage component not found on the assigned levelStorage prefab.");
         }
 
         // Retrieve InstrumentAudioStorage from prefab
         if (this.data.InstrumentAudioStoragePrefab) {
-            this.instrumentAudioStorage = this.data.InstrumentAudioStoragePrefab.data.getComponent(InstrumentAudioStorage);
+            this.insAudioStorage = this.data.InstrumentAudioStoragePrefab.data.getComponent(InstrumentAudioStorage);
         } else {
             console.error("PlayGamePage: InstrumentAudioStoragePrefab is not assigned in the inspector.");
         }
-        if (!this.instrumentAudioStorage) {
+        if (!this.insAudioStorage) {
             console.error("PlayGamePage: InstrumentAudioStorage component not found on the assigned InstrumentAudioStoragePrefab.");
         }
     }

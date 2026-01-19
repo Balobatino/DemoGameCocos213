@@ -20,13 +20,27 @@ export class UserSelection {
 
     @property(cc.Integer)
     public selectLevel: number = 0;
+
+    public reset(): void {
+        this.difficultMode = DifficultMode.Easy;
+        this.selectLevel = 0;
+    }
 }
 
 /**
  * Class representing game-specific statistics.
  */
 @ccclass("Stats")
-export class Stats {}
+export class Stats {
+    /**
+     * The index of the current note being processed/played.
+     */
+    public currentNoteIndex: number = 0;
+
+    public reset(): void {
+        this.currentNoteIndex = 0;
+    }
+}
 
 /**
  * Global class for managing game statistics and user selection.
@@ -34,19 +48,13 @@ export class Stats {}
  */
 export default class GameStats {
     public static userSelect: UserSelection = new UserSelection();
-    public static gameStats: Stats = new Stats();
-
-    /**
-     * The index of the current note being processed/played.
-     */
-    public static currentNoteIndex: number = 0;
+    public static stats: Stats = new Stats();
 
     /**
      * Resets statistics for a new game session.
      */
     public static resetStatsForNewGame(): void {
-        this.currentNoteIndex = 0;
-        this.userSelect.selectLevel = 0;
-        this.userSelect.difficultMode = DifficultMode.Easy;
+        this.stats.reset();
+        this.userSelect.reset();
     }
 }

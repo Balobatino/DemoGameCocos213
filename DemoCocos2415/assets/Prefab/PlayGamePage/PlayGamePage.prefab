@@ -36,11 +36,11 @@
         "__id__": 17
       },
       {
-        "__id__": 19
+        "__id__": 21
       }
     ],
     "_prefab": {
-      "__id__": 21
+      "__id__": 22
     },
     "_opacity": 255,
     "_color": {
@@ -632,6 +632,9 @@
       "__id__": 18
     },
     "data": {
+      "__id__": 19
+    },
+    "insAnimConfig": {
       "__id__": 20
     },
     "_id": ""
@@ -643,20 +646,7 @@
     },
     "rootInstrument": {
       "__id__": 13
-    },
-    "inputBlocker": {
-      "__id__": 19
     }
-  },
-  {
-    "__type__": "cc.BlockInputEvents",
-    "_name": "",
-    "_objFlags": 0,
-    "node": {
-      "__id__": 1
-    },
-    "_enabled": true,
-    "_id": ""
   },
   {
     "__type__": "PlayGamePageData",
@@ -687,6 +677,21 @@
     "levelStorage": {
       "__uuid__": "348d1346-59e3-4dca-a484-7104fde44c4c"
     }
+  },
+  {
+    "__type__": "InstrumentAnimationConfig",
+    "showDuration": 0.3,
+    "showEasing": 23
+  },
+  {
+    "__type__": "cc.BlockInputEvents",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 1
+    },
+    "_enabled": true,
+    "_id": ""
   },
   {
     "__type__": "cc.PrefabInfo",
