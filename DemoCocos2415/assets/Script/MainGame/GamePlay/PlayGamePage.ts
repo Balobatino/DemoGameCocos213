@@ -5,6 +5,7 @@ import { EasingType, EasingMap } from "../../Standard/UIPage/ElementAnimation/An
 import { UIPage } from "../../Standard/UIPage/UIPage";
 import { AudioManager } from "../../Standard/Audio/AudioManager";
 import { LevelSelectPage } from "../UI/LevelSelectPage/LevelSelectPage";
+import { ListenAndRepeatPage } from "../UI/ListenAndRepeatPage";
 import GameStats from "../GameStats/GameStats";
 import { CollectionUtils } from "../../Utils/CollectionUtils";
 import InstrumentButton from "./InstrumentButton";
@@ -300,8 +301,11 @@ export class PlayGamePage extends Singleton<PlayGamePage> {
         // Wait for all instruments to finish scaling in
         await this.sleep(this.insAnimConfig.showDuration * 1000);
 
-        // TODO : popup "Get Ready" UI here
+        // Show the sequence start tutorial popup
+        await this.openAndDelayCloseListenAndRepeatPopup();
 
+        // calculate the levelSequenceData, using the cache currentLevelData
+        this.calculateLevelSequenceForCurrentLevel();
         // Run the note sequence playback
         await this.runNotesSequence();
 
@@ -309,10 +313,6 @@ export class PlayGamePage extends Singleton<PlayGamePage> {
         if (layout) {
             layout.enabled = true;
         }
-
-        // before enable backButton
-        // calculate the levelSequenceData, using the cache currentLevelData
-        this.calculateLevelSequenceForCurrentLevel();
 
         // Preparation complete, re-enable back navigation
         if (this.uiRef.backButton) {
@@ -372,6 +372,9 @@ export class PlayGamePage extends Singleton<PlayGamePage> {
         }
     }
 
+    //------------------------------
+    //--- Instrument callback handler
+
     /**
      * Handler for instrument button clicks.
      * @param index - The index of the instrument in the active list.
@@ -381,6 +384,9 @@ export class PlayGamePage extends Singleton<PlayGamePage> {
         const insBtn = this.instrumentButtons[index];
         // console.log(`Instrument index ${index} clicked.`);
     }
+
+    //------------------------------
+    //--- Instrument animation
 
     /**
      * Animates all active instruments scaling down to zero and then destroys them.
@@ -417,9 +423,6 @@ export class PlayGamePage extends Singleton<PlayGamePage> {
         return new Promise((resolve) => setTimeout(resolve, milliseconds));
     }
 
-    //------------------------------
-    //--- Instrument Animations
-
     /**
      * Performs a scale ping-pong "flick" animation on the target node.
      * Scales from current scale to 1.1 and back to 1.0.
@@ -437,6 +440,37 @@ export class PlayGamePage extends Singleton<PlayGamePage> {
         const easing = EasingMap.get(this.insAnimConfig.flickEasing);
 
         cc.tween(target).to(halfDuration, { scaleX: 1.1, scaleY: 1.1 }, { easing }).to(halfDuration, { scaleX: 1.0, scaleY: 1.0 }, { easing }).start();
+    }
+
+    //------------------------------
+    //--- Utils, popup
+
+    /**
+     * Opens the ListenAndRepeatPage popup, waits for a duration, then closes it.
+     */
+    private async openAndDelayCloseListenAndRepeatPopup(): Promise<void> {
+        const listenPage = ListenAndRepeatPage.getInstance<ListenAndRepeatPage>();
+        if (!listenPage) {
+            console.warn("PlayGamePage: ListenAndRepeatPage singleton instance not found.");
+            return;
+        }
+
+        const uiPage = listenPage.getUiPage();
+        if (!uiPage) {
+            console.warn("PlayGamePage: UIPage component not found on ListenAndRepeatPage.");
+            return;
+        }
+
+        // Show the listen and repeat page
+        uiPage.show();
+        await this.sleep(uiPage.getShowDuration() * 1000);
+
+        // Wait for an additional second
+        await this.sleep(1000);
+
+        // Hide the page
+        uiPage.hide();
+        await this.sleep(uiPage.getHideDuration() * 1000);
     }
 
     //------------------------------
