@@ -6,6 +6,7 @@ import { UIPage } from "../../Standard/UIPage/UIPage";
 import { AudioManager } from "../../Standard/Audio/AudioManager";
 import { LevelSelectPage } from "../UI/LevelSelectPage/LevelSelectPage";
 import { ListenAndRepeatPage } from "../UI/ListenAndRepeatPage";
+import { GoodNextSequencePage } from "../UI/GoodNextSequencePage";
 import GameStats from "../GameStats/GameStats";
 import { CollectionUtils } from "../../Utils/CollectionUtils";
 import InstrumentButton from "./InstrumentButton";
@@ -309,6 +310,10 @@ export class PlayGamePage extends Singleton<PlayGamePage> {
 
         // calculate the levelSequenceData, using the cache currentLevelData
         this.calculateLevelSequenceForCurrentLevel();
+
+        // reset stats
+        GameStats.stats.reset();
+
         // Run the note sequence playback
         await this.runNotesSequence();
 
@@ -339,9 +344,6 @@ export class PlayGamePage extends Singleton<PlayGamePage> {
         this.levelSequenceData.nodeInterval = cc.misc.lerp(this.currentLevelData.maxNoteInterval, this.currentLevelData.minNoteInterval, ratio);
         // Generate random note sequences for the level
         this.levelSequenceData.notesSequences = CollectionUtils.generateRandomIntArray(this.levelSequenceData.sequenceLength, this.currentLevelData.numberOfInstruments - 1);
-
-        // reset stats for new level
-        GameStats.stats.reset();
     }
 
     //------------------------------
@@ -420,7 +422,6 @@ export class PlayGamePage extends Singleton<PlayGamePage> {
         }
 
         const expectedIndex = notesSequences[currentNoteIndex];
-
         // Validate click against sequence
         if (index === expectedIndex) {
             console.log(`PlayGamePage: user hit right note at index ${currentNoteIndex}`);
@@ -431,6 +432,10 @@ export class PlayGamePage extends Singleton<PlayGamePage> {
             // Check for sequence completion
             if (GameStats.stats.currentNoteIndex >= notesSequences.length) {
                 console.log("PlayGamePage: user finish the current level");
+                GameStats.stats.turnIndex++;
+
+                if (GameStats.stats.turnIndex >= this.levelSequenceData.sequenceLength) {
+                }
             }
         } else {
             console.warn(`PlayGamePage: user hit the wrong notes. Expected instrument index ${expectedIndex} at sequence step ${currentNoteIndex}, but clicked ${index}.`);
@@ -529,6 +534,56 @@ export class PlayGamePage extends Singleton<PlayGamePage> {
 
         // Move the popup to the background (index 0) so it does not block inputs on this page.
         listenPage.node.setSiblingIndex(0);
+    }
+
+    /**
+     * Opens the GoodNextSequencePage popup, updates level configuration, and replays the sequence.
+     */
+    private async openGoodToNextTurnAndConfigSequence(): Promise<void> {
+        // Block interaction while the transition is in progress.
+        if (this.uiPage) {
+            this.uiPage.setActiveInteraction(false);
+        }
+
+        const goodPage = GoodNextSequencePage.getInstance<GoodNextSequencePage>();
+        if (!goodPage) {
+            console.warn("PlayGamePage: GoodNextSequencePage singleton instance not found.");
+            return;
+        }
+
+        const uiPage = goodPage.getUiPage();
+        if (!uiPage) {
+            console.warn("PlayGamePage: UIPage component not found on GoodNextSequencePage.");
+            return;
+        }
+
+        // Show the good next sequence page
+        uiPage.show();
+        await this.sleep(uiPage.getShowDuration() * 1000);
+
+        // Wait for an additional second
+        await this.sleep(1000);
+
+        // Hide the page
+        uiPage.hide();
+        await this.sleep(uiPage.getHideDuration() * 1000);
+
+        // Guard: ensure node exists before modifying hierarchy
+        if (goodPage.node) {
+            // Move the popup to the background (index 0) so it does not block inputs on this page.
+            goodPage.node.setSiblingIndex(0);
+        }
+
+        // update the sequence for the next turn
+        this.calculateLevelSequenceForCurrentLevel();
+
+        // Run the note sequence playback again
+        await this.runNotesSequence();
+
+        // Re-enable interaction after the sequence playback
+        if (this.uiPage) {
+            this.uiPage.setActiveInteraction(true);
+        }
     }
 
     //------------------------------
