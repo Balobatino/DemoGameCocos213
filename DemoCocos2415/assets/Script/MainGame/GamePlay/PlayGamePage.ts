@@ -8,6 +8,7 @@ import { LevelSelectPage } from "../UI/LevelSelectPage/LevelSelectPage";
 import { ListenAndRepeatPage } from "../UI/ListenAndRepeatPage";
 import { GoodNextSequencePage } from "../UI/GoodNextSequencePage";
 import WinLevelPage from "../UI/WinLevelPage";
+import FailedLevelPage from "../UI/FailedLevelPage";
 import GameStats from "../GameStats/GameStats";
 import { CollectionUtils } from "../../Utils/CollectionUtils";
 import InstrumentButton from "./InstrumentButton";
@@ -439,7 +440,6 @@ export class PlayGamePage extends Singleton<PlayGamePage> {
                     // a bit hardcode here, currently we have 10 levels per difficult mode
                     if (GameStats.userSelect.selectLevel < 10) {
                         console.log("PlayGamePage: user finish all turns for the level, open WindLevelPage");
-                        // Open WinLevelPage
                         this.openWinLevelPopup();
                     } else {
                         console.log("PlayGamePage: user finish all level of the difficult, Open win mode page!");
@@ -454,6 +454,7 @@ export class PlayGamePage extends Singleton<PlayGamePage> {
             }
         } else {
             console.warn(`PlayGamePage: user hit the wrong notes. Expected instrument index ${expectedIndex} at sequence step ${currentNoteIndex}, but clicked ${index}.`);
+            this.openFailedLevelPopup();
         }
     }
 
@@ -634,6 +635,45 @@ export class PlayGamePage extends Singleton<PlayGamePage> {
                 winUiPage.show();
             } else {
                 console.warn("WinLevelPage: UIPage component not found; cannot call show().");
+            }
+        }, delay);
+    }
+
+    /**
+     * Opens the Failed Level popup.
+     * Hides this page and opens the failed page after a delay.
+     */
+    private openFailedLevelPopup(): void {
+        // Reset game stats progress before showing the failure page.
+        GameStats.stats.reset();
+
+        const uiPage = this.getUiPage();
+        // Guard: missing UIPage
+        if (!uiPage) {
+            console.warn("PlayGamePage: UIPage component not found; cannot call hide().");
+            return;
+        }
+
+        // hide the play game page
+        uiPage.hide();
+
+        // scale down and destroy instruments
+        void this.scaleDownInstrumentAndDestroy();
+
+        // Delay 75% of hide duration before opening the failed level page
+        const delay = uiPage.getHideDuration() * 0.75;
+        this.scheduleOnce(() => {
+            const failedLevelPage = FailedLevelPage.getInstance<FailedLevelPage>();
+            if (!failedLevelPage) {
+                console.warn("FailedLevelPage singleton instance not found.");
+                return;
+            }
+
+            const failedUiPage = failedLevelPage.getUiPage();
+            if (failedUiPage) {
+                failedUiPage.show();
+            } else {
+                console.warn("FailedLevelPage: UIPage component not found; cannot call show().");
             }
         }, delay);
     }
