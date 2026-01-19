@@ -471,6 +471,12 @@ export class PlayGamePage extends Singleton<PlayGamePage> {
         // Hide the page
         uiPage.hide();
         await this.sleep(uiPage.getHideDuration() * 1000);
+
+        // Guard: ensure node exists before modifying hierarchy
+        if (!listenPage.node) return;
+
+        // Move the popup to the background (index 0) so it does not block inputs on this page.
+        listenPage.node.setSiblingIndex(0);
     }
 
     //------------------------------
