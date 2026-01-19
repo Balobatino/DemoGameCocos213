@@ -174,6 +174,9 @@ export class PlayGamePage extends Singleton<PlayGamePage> {
         // hide the play game page
         uiPage.hide();
 
+        // scale down and destroy instruments
+        void this.scaleDownInstrumentAndDestroy();
+
         // Delay 75% of hide duration before reopening the level select page
         const delay = uiPage.getHideDuration() * 0.75;
         this.scheduleOnce(() => {
@@ -219,6 +222,8 @@ export class PlayGamePage extends Singleton<PlayGamePage> {
 
         // Determine which instruments to spawn
         const pickedPrefabs = CollectionUtils.randomPickFromList(this.data.instrumentPrefabs, levelData.numberOfInstruments);
+        // log number of instruments picked
+        console.log(`PlayGamePage: picked ${pickedPrefabs.length} instrument prefabs for difficulty ${mode}, expected ${levelData.numberOfInstruments}.`);
 
         for (let n = 0; n < pickedPrefabs.length; n++) {
             const prefab = pickedPrefabs[n];
@@ -230,6 +235,11 @@ export class PlayGamePage extends Singleton<PlayGamePage> {
             } else {
                 console.error("PlayGamePage: rootInstrument layout is not assigned in the inspector.");
             }
+
+            // insNode.setParent(this.node);
+            // let position = cc.Vec3.ZERO;
+            // position.x = n * this.data.instrumentDisplayWidth;
+            // insNode.setPosition(position);
 
             const insBtn = insNode.getComponent(InstrumentButton);
             if (insBtn) {
@@ -249,15 +259,17 @@ export class PlayGamePage extends Singleton<PlayGamePage> {
 
             // Animate the appearance of the instrument
             insNode.setScale(0, 0, 1);
+            // console.log(`Instrument ${insNode.name} animation start. Scale: ${insNode.scale}, size ${insNode.getContentSize()}, Parent: ${insNode.parent?.name}`);
+
             // Update : Tween per-axis numeric scale properties to avoid NaN produced when assigning a Vec3 directly.
-            cc.tween(insNode)
+            const t = cc
+                .tween(insNode)
                 .to(this.insAnimConfig.showDuration, { scaleX: 1, scaleY: 1, scaleZ: 1 }, { easing: EasingMap.get(this.insAnimConfig.showEasing) })
                 .call(() => {
-                    // Animation complete callback (if needed)
-                    // log current scale, current parent of the instrument
-                    console.log(`Instrument ${insNode.name} animation complete. Scale: ${insNode.scale}, Parent: ${insNode.parent?.name}`);
-                })
-                .start();
+                    // // Animation complete callback (if needed)
+                    // console.log(`Instrument ${insNode.name} animation complete. Scale: ${insNode.scale}, size ${insNode.getContentSize()}, Parent: ${insNode.parent?.name}`);
+                });
+            t.start();
         }
 
         // config size for the root instrument, = number of instruments * instrument width
@@ -283,6 +295,28 @@ export class PlayGamePage extends Singleton<PlayGamePage> {
     private onInstrument(index: number): void {
         // Implementation for note checking/playing logic goes here.
         console.log(`Instrument index ${index} clicked.`);
+    }
+
+    /**
+     * Animates all active instruments scaling down to zero and then destroys them.
+     */
+    private async scaleDownInstrumentAndDestroy(): Promise<void> {
+        if (this.instrumentButtons.length === 0) return;
+
+        // Use UIPage's hide duration if available, else fallback to show duration.
+        const duration = this.uiPage ? this.uiPage.getHideDuration() : this.insAnimConfig.showDuration;
+        const easing = EasingMap.get(this.insAnimConfig.showEasing);
+
+        for (const btn of this.instrumentButtons) {
+            if (!btn.node) continue;
+            cc.tween(btn.node)
+                .to(duration, { scaleX: 0, scaleY: 0, scaleZ: 1 }, { easing: EasingMap.get(this.insAnimConfig.showEasing) })
+                .start();
+        }
+
+        // Wait for animations to complete before node destruction.
+        await this.sleep(duration * 1000);
+        this.clearInstruments();
     }
 
     /**
