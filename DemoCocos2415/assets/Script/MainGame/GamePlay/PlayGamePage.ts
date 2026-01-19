@@ -1,5 +1,5 @@
 import InstrumentAudioStorage from "../../Data/InstrumentAudioStorage";
-import LevelDataStorage from "../../Data/LevelDataStorage";
+import LevelDataStorage, { LevelData } from "../../Data/LevelDataStorage";
 import { Singleton } from "../../Standard/Singleton";
 import { EasingType, EasingMap } from "../../Standard/UIPage/ElementAnimation/AnimationMapCache";
 import { UIPage } from "../../Standard/UIPage/UIPage";
@@ -48,6 +48,18 @@ export class InstrumentAnimationConfig {
 
     @property({ type: cc.Enum(EasingType) })
     public showEasing: EasingType = EasingType.BackOut;
+
+    @property(cc.Float)
+    public flickDuration: number = 0.2;
+
+    @property({ type: cc.Enum(EasingType) })
+    public flickEasing: EasingType = EasingType.BackOut;
+}
+
+export class LevelSequenceData {
+    public sequenceLength: number = 0;
+    public nodeInterval: number = 0;
+    public notesSequences: number[] = [];
 }
 
 /**
@@ -75,6 +87,9 @@ export class PlayGamePage extends Singleton<PlayGamePage> {
 
     private levelStorage: LevelDataStorage | null = null;
     private insAudioStorage: InstrumentAudioStorage | null = null;
+
+    private currentLevelData: LevelData | null = null;
+    private levelSequenceData: LevelSequenceData = new LevelSequenceData();
 
     // List of active instrument buttons in the current game session.
     private instrumentButtons: InstrumentButton[] = [];
@@ -210,12 +225,19 @@ export class PlayGamePage extends Singleton<PlayGamePage> {
             this.uiRef.backButton.interactable = false;
         }
 
-        // Retrieve level configuration based on current difficulty mode
+        // Retrieve level configuration based on current difficulty mode.
         const mode = GameStats.userSelect.difficultMode;
-        if (!this.levelStorage) return;
+        if (!this.levelStorage) {
+            console.error("PlayGamePage: LevelDataStorage is not available; cannot configure level.");
+            return;
+        }
 
         const levelData = this.levelStorage.getLevelConfigForDifficultMode(mode);
-        if (!levelData) return;
+        if (!levelData) {
+            console.error(`PlayGamePage: No level data found for difficulty mode ${mode}.`);
+            return;
+        }
+        this.currentLevelData = levelData;
 
         // Clear any existing instruments from previous rounds
         this.clearInstruments();
@@ -223,7 +245,7 @@ export class PlayGamePage extends Singleton<PlayGamePage> {
         // Determine which instruments to spawn
         const pickedPrefabs = CollectionUtils.randomPickFromList(this.data.instrumentPrefabs, levelData.numberOfInstruments);
         // log number of instruments picked
-        console.log(`PlayGamePage: picked ${pickedPrefabs.length} instrument prefabs for difficulty ${mode}, expected ${levelData.numberOfInstruments}.`);
+        // console.log(`PlayGamePage: picked ${pickedPrefabs.length} instrument prefabs for difficulty ${mode}, expected ${levelData.numberOfInstruments}.`);
 
         for (let n = 0; n < pickedPrefabs.length; n++) {
             const prefab = pickedPrefabs[n];
@@ -282,10 +304,32 @@ export class PlayGamePage extends Singleton<PlayGamePage> {
             layout.enabled = true;
         }
 
+        // before enable backButton
+        // calculate the levelSequenceData, using the cache currentLevelData
+        this.calculateLevelSequenceForCurrentLevel();
+
         // Preparation complete, re-enable back navigation
         if (this.uiRef.backButton) {
             this.uiRef.backButton.interactable = true;
         }
+    }
+
+    /**
+     * Calculates the level sequence data based on current level configuration and progress.
+     */
+    private calculateLevelSequenceForCurrentLevel(): void {
+        if (!this.currentLevelData) {
+            console.error("PlayGamePage: currentLevelData is not set; cannot calculate level sequence.");
+            return;
+        }
+
+        const ratio = GameStats.userSelect.selectLevel / 10;
+        // Calculate sequence length using linear interpolation
+        this.levelSequenceData.sequenceLength = Math.round(cc.misc.lerp(this.currentLevelData.minSequenceLength, this.currentLevelData.maxSequenceLength, ratio));
+        // Calculate node interval using linear interpolation
+        this.levelSequenceData.nodeInterval = cc.misc.lerp(this.currentLevelData.maxNoteInterval, this.currentLevelData.minNoteInterval, ratio);
+        // Generate random note sequences for the level
+        this.levelSequenceData.notesSequences = CollectionUtils.generateRandomIntArray(this.levelSequenceData.sequenceLength, this.currentLevelData.numberOfInstruments - 1);
     }
 
     /**
@@ -294,7 +338,11 @@ export class PlayGamePage extends Singleton<PlayGamePage> {
      */
     private onInstrument(index: number): void {
         // Implementation for note checking/playing logic goes here.
-        console.log(`Instrument index ${index} clicked.`);
+        const insBtn = this.instrumentButtons[index];
+        // if (insBtn && insBtn.node) {
+        //     this.playFlickAnimationOnInstrumentNode(insBtn.node);
+        // }
+        // console.log(`Instrument index ${index} clicked.`);
     }
 
     /**
@@ -309,9 +357,7 @@ export class PlayGamePage extends Singleton<PlayGamePage> {
 
         for (const btn of this.instrumentButtons) {
             if (!btn.node) continue;
-            cc.tween(btn.node)
-                .to(duration, { scaleX: 0, scaleY: 0, scaleZ: 1 }, { easing: EasingMap.get(this.insAnimConfig.showEasing) })
-                .start();
+            cc.tween(btn.node).to(duration, { scaleX: 0, scaleY: 0, scaleZ: 1 }, { easing }).start();
         }
 
         // Wait for animations to complete before node destruction.
@@ -333,6 +379,26 @@ export class PlayGamePage extends Singleton<PlayGamePage> {
     private sleep(milliseconds: number): Promise<void> {
         return new Promise((resolve) => setTimeout(resolve, milliseconds));
     }
+
+    //------------------------------
+    //--- Instrument Animations
+
+    /**
+     * Performs a scale ping-pong "flick" animation on the target node.
+     * Scales from current scale to 1.1 and back to 1.0.
+     * @param target - The CCNode to animate.
+     */
+    private playFlickAnimationOnInstrumentNode(target: cc.Node): void {
+        // Guard: invalid target
+        if (!target) return;
+
+        // Split total duration into two halves for the ping-pong effect
+        const halfDuration = this.insAnimConfig.flickDuration / 2;
+        const easing = EasingMap.get(this.insAnimConfig.flickEasing);
+
+        cc.tween(target).to(halfDuration, { scaleX: 1.1, scaleY: 1.1 }, { easing }).to(halfDuration, { scaleX: 1.0, scaleY: 1.0 }, { easing }).start();
+    }
+
     //------------------------------
     //--- Cleanup
 

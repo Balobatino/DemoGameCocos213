@@ -42,4 +42,23 @@ export class CollectionUtils {
 
         return result.slice(0, pickCount);
     }
+
+    /**
+     * Generates an array of a specified length filled with random integers.
+     * @param resultLength - The number of elements to generate.
+     * @param maxValue - The maximum possible value for the random integers (inclusive).
+     * @returns An array of random integers within the range [0, maxValue].
+     */
+    public static generateRandomIntArray(resultLength: number, maxValue: number): number[] {
+        // Guard: invalid length
+        if (resultLength <= 0) return [];
+
+        const result: number[] = new Array(resultLength);
+        for (let i = 0; i < resultLength; i++) {
+            // Calculate a random integer between 0 and maxValue inclusive.
+            result[i] = Math.floor(Math.random() * (maxValue + 1));
+        }
+
+        return result;
+    }
 }
