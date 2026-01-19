@@ -214,7 +214,6 @@ export class LevelSelectPage extends Singleton<LevelSelectPage> {
 
         // Save select level index to GameStats and reset stats for new game
         GameStats.userSelect.selectLevel = levelIndex;
-        GameStats.resetStatsForNewGame();
     }
 
     //------------------------------
