@@ -61,7 +61,9 @@ export class AudioManager extends Singleton<AudioManager> {
         // reset player state and push to idle pool
         if (player.audioSource) {
             player.audioSource.stop();
-            player.audioSource.clip = null;
+            // NOTES !! : in cocos 2.x set clip to null may cause issue, currently the error log when playing on web.
+            // so ignore it here. tested, the audioPlayer still works after returning to idle.
+            // player.audioSource.clip = null;
         }
         player.audioType = AudioType.None;
         this.idlePlayers.push(player);
