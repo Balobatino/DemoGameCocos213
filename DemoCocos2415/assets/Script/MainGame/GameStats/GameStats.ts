@@ -37,8 +37,14 @@ export class Stats {
      */
     public currentNoteIndex: number = 0;
 
+    /**
+     * The current turn index within the level.
+     */
+    public turnIndex: number = 0;
+
     public reset(): void {
         this.currentNoteIndex = 0;
+        this.turnIndex = 0;
     }
 }
 

@@ -213,6 +213,9 @@ export class PlayGamePage extends Singleton<PlayGamePage> {
         }, delay);
     }
 
+    //------------------------------
+    //--- Game Session Initialization
+
     /**
      * Initializes the game session: configures levels, spawns instruments, and plays entry animations.
      */
@@ -268,7 +271,7 @@ export class PlayGamePage extends Singleton<PlayGamePage> {
 
                 // Register button interaction touch event
                 if (insBtn.uiReference.button) {
-                    insBtn.uiReference.button.node.on(cc.Node.EventType.TOUCH_END, () => this.onInstrument(n), this);
+                    insBtn.uiReference.button.node.on(cc.Node.EventType.TOUCH_END, () => this.onInstrumentClick(n), this);
                 } else {
                     console.warn(`PlayGamePage: InstrumentButton at index ${n} is missing its Button component in uiReference.`);
                 }
@@ -336,7 +339,13 @@ export class PlayGamePage extends Singleton<PlayGamePage> {
         this.levelSequenceData.nodeInterval = cc.misc.lerp(this.currentLevelData.maxNoteInterval, this.currentLevelData.minNoteInterval, ratio);
         // Generate random note sequences for the level
         this.levelSequenceData.notesSequences = CollectionUtils.generateRandomIntArray(this.levelSequenceData.sequenceLength, this.currentLevelData.numberOfInstruments - 1);
+
+        // reset stats for new level
+        GameStats.stats.reset();
     }
+
+    //------------------------------
+    //--- Level Note Sequence Execution
 
     /**
      * Executes the sequence of notes by playing audio and visual effects.
@@ -379,10 +388,53 @@ export class PlayGamePage extends Singleton<PlayGamePage> {
      * Handler for instrument button clicks.
      * @param index - The index of the instrument in the active list.
      */
-    private onInstrument(index: number): void {
-        // Implementation for note checking/playing logic goes here.
+    private onInstrumentClick(index: number): void {
         const insBtn = this.instrumentButtons[index];
-        // console.log(`Instrument index ${index} clicked.`);
+        if (!insBtn) {
+            console.warn(`PlayGamePage: Invalid instrument index ${index} clicked.`);
+            return;
+        }
+
+        // play audio for the instrument
+        if (this.insAudioStorage) {
+            const clip = this.insAudioStorage.getClipForInstrument(insBtn.instrumentType);
+            AudioManager.getInstance<AudioManager>()?.playOnShot(clip);
+        } else {
+            console.warn("PlayGamePage: InstrumentAudioStorage is not available; cannot play instrument audio.");
+        }
+
+        // Retrieve current note progress and sequence
+        const currentNoteIndex = GameStats.stats.currentNoteIndex;
+        const notesSequences = this.levelSequenceData.notesSequences;
+
+        // Guard: check if sequence data is valid
+        if (!notesSequences || notesSequences.length === 0) {
+            console.warn("PlayGamePage: Target note sequence is empty or not initialized.");
+            return;
+        }
+
+        // Check if we have already finished the sequence
+        if (currentNoteIndex >= notesSequences.length) {
+            console.warn("PlayGamePage: All notes for this sequence have already been hit.");
+            return;
+        }
+
+        const expectedIndex = notesSequences[currentNoteIndex];
+
+        // Validate click against sequence
+        if (index === expectedIndex) {
+            console.log(`PlayGamePage: user hit right note at index ${currentNoteIndex}`);
+
+            // Progress to the next note
+            GameStats.stats.currentNoteIndex++;
+
+            // Check for sequence completion
+            if (GameStats.stats.currentNoteIndex >= notesSequences.length) {
+                console.log("PlayGamePage: user finish the current level");
+            }
+        } else {
+            console.warn(`PlayGamePage: user hit the wrong notes. Expected instrument index ${expectedIndex} at sequence step ${currentNoteIndex}, but clicked ${index}.`);
+        }
     }
 
     //------------------------------
