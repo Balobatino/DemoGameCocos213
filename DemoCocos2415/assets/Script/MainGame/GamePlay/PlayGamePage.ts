@@ -435,6 +435,13 @@ export class PlayGamePage extends Singleton<PlayGamePage> {
                 GameStats.stats.turnIndex++;
 
                 if (GameStats.stats.turnIndex >= this.levelSequenceData.sequenceLength) {
+                    console.log("PlayGamePage: user finish all turns for the level, open WindLevelPage");
+                } else {
+                    console.log(`PlayGamePage: user completed turn ${GameStats.stats.turnIndex}, preparing next sequence.`);
+                    // Restart note index for the next turn
+                    GameStats.stats.currentNoteIndex = 0;
+                    // Open good next sequence popup and configure next sequence
+                    void this.openGoodToNextTurnAndConfigSequence();
                 }
             }
         } else {
