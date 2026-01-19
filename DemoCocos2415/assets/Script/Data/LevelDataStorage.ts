@@ -14,6 +14,12 @@ export class LevelData {
     public difficultMode: DifficultMode = DifficultMode.Easy;
 
     /**
+     * Number of instruments to use in this difficulty.
+     */
+    @property(cc.Integer)
+    public numberOfInstruments: number = 1;
+
+    /**
      * Minimum length of the note sequence.
      */
     @property(cc.Integer)

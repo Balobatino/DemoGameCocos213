@@ -97,6 +97,7 @@
   {
     "__type__": "LevelData",
     "difficultMode": 0,
+    "numberOfInstruments": 2,
     "minSequenceLength": 3,
     "maxSequenceLength": 6,
     "minNoteInterval": 0.5,
@@ -106,6 +107,7 @@
   {
     "__type__": "LevelData",
     "difficultMode": 1,
+    "numberOfInstruments": 4,
     "minSequenceLength": 4,
     "maxSequenceLength": 7,
     "minNoteInterval": 0.4,
@@ -115,6 +117,7 @@
   {
     "__type__": "LevelData",
     "difficultMode": 2,
+    "numberOfInstruments": 6,
     "minSequenceLength": 5,
     "maxSequenceLength": 8,
     "minNoteInterval": 0.3,
