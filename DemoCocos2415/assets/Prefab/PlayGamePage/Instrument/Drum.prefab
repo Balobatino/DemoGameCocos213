@@ -300,6 +300,7 @@
       "__id__": 8
     },
     "instrumentType": 4,
+    "indexInGroup": -1,
     "_id": ""
   },
   {
@@ -320,6 +321,7 @@
       "__id__": 10
     },
     "instrumentType": 2,
+    "indexInGroup": -1,
     "_id": ""
   },
   {
