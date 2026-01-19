@@ -3,6 +3,7 @@ import LevelDataStorage, { LevelData } from "../../Data/LevelDataStorage";
 import { Singleton } from "../../Standard/Singleton";
 import { EasingType, EasingMap } from "../../Standard/UIPage/ElementAnimation/AnimationMapCache";
 import { UIPage } from "../../Standard/UIPage/UIPage";
+import { AudioManager } from "../../Standard/Audio/AudioManager";
 import { LevelSelectPage } from "../UI/LevelSelectPage/LevelSelectPage";
 import GameStats from "../GameStats/GameStats";
 import { CollectionUtils } from "../../Utils/CollectionUtils";
@@ -299,6 +300,11 @@ export class PlayGamePage extends Singleton<PlayGamePage> {
         // Wait for all instruments to finish scaling in
         await this.sleep(this.insAnimConfig.showDuration * 1000);
 
+        // TODO : popup "Get Ready" UI here
+
+        // Run the note sequence playback
+        await this.runNotesSequence();
+
         // Re-enable layout so it can handle any future structural changes
         if (layout) {
             layout.enabled = true;
@@ -333,15 +339,46 @@ export class PlayGamePage extends Singleton<PlayGamePage> {
     }
 
     /**
+     * Executes the sequence of notes by playing audio and visual effects.
+     */
+    private async runNotesSequence(): Promise<void> {
+        // Guard: missing sequence data
+        if (!this.levelSequenceData || !this.levelSequenceData.notesSequences) {
+            console.error("PlayGamePage: levelSequenceData is not properly configured; cannot run notes sequence.");
+            return;
+        }
+
+        for (let i = 0; i < this.levelSequenceData.sequenceLength; i++) {
+            const instrumentIndex = this.levelSequenceData.notesSequences[i];
+            const insBtn = this.instrumentButtons[instrumentIndex];
+
+            if (!insBtn) {
+                console.warn(`PlayGamePage: Invalid instrument index ${instrumentIndex} in notes sequence.`);
+                continue;
+            }
+            // Trigger audio and animation if the instrument is valid
+            if (this.insAudioStorage) {
+                const clip = this.insAudioStorage.getClipForInstrument(insBtn.instrumentType);
+                AudioManager.getInstance<AudioManager>()?.playOnShot(clip);
+            } else {
+                console.warn("PlayGamePage: InstrumentAudioStorage is not available; cannot play instrument audio.");
+            }
+
+            // Play flick animation on the instrument node
+            this.playFlickAnimationOnInstrumentNode(insBtn.node);
+
+            // Wait for the next note in the sequence
+            await this.sleep(this.levelSequenceData.nodeInterval * 1000);
+        }
+    }
+
+    /**
      * Handler for instrument button clicks.
      * @param index - The index of the instrument in the active list.
      */
     private onInstrument(index: number): void {
         // Implementation for note checking/playing logic goes here.
         const insBtn = this.instrumentButtons[index];
-        // if (insBtn && insBtn.node) {
-        //     this.playFlickAnimationOnInstrumentNode(insBtn.node);
-        // }
         // console.log(`Instrument index ${index} clicked.`);
     }
 
@@ -391,6 +428,9 @@ export class PlayGamePage extends Singleton<PlayGamePage> {
     private playFlickAnimationOnInstrumentNode(target: cc.Node): void {
         // Guard: invalid target
         if (!target) return;
+
+        // stop any existing tweens on the target before starting a new one
+        cc.Tween.stopAllByTarget(target);
 
         // Split total duration into two halves for the ping-pong effect
         const halfDuration = this.insAnimConfig.flickDuration / 2;
