@@ -13,6 +13,7 @@ import FailedLevelPage from "../UI/FailedLevelPage";
 import GameStats from "../GameStats/GameStats";
 import { CollectionUtils } from "../../Utils/CollectionUtils";
 import InstrumentButton from "./InstrumentButton";
+import { UserScoreLoadSave } from "../../UserScoreLoadSave/UserScoreLoadSave";
 
 const { ccclass, property } = cc._decorator;
 
@@ -446,6 +447,8 @@ export class PlayGamePage extends Singleton<PlayGamePage> {
                         console.log("PlayGamePage: user finish all level of the difficult, Open win mode page!");
                         this.openWinDifficultModePopup();
                     }
+                    // save current progress to UserScoreLoadSave
+                    UserScoreLoadSave.saveScore(GameStats.userSelect.difficultMode, GameStats.userSelect.selectLevel);
                 } else {
                     console.log(`PlayGamePage: user completed turn ${GameStats.stats.turnIndex}, preparing next sequence.`);
                     // Restart note index for the next turn
