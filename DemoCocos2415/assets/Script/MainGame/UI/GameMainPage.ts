@@ -118,7 +118,8 @@ export class GameMainPage extends Singleton<GameMainPage> {
             console.warn("GameModePage singleton instance not found in Main scene.");
             return;
         }
-
+        // also call it to update content since user score may changed
+        gameModePage.configContentForDifficultMode();
         const uiPage = gameModePage.getUiPage();
         if (uiPage) {
             uiPage.show();

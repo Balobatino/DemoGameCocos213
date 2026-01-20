@@ -34,6 +34,7 @@ export class GameModePage extends Singleton<GameModePage> {
     //------------------------------
     //---- Constants
     public static readonly levelPerDifficult = 10;
+    public static readonly minLevelToUnlockNextMode = 3;
 
     //------------------------------
     //---- Inspector grouped UI references
@@ -80,18 +81,18 @@ export class GameModePage extends Singleton<GameModePage> {
             this.uiRef.easyModeItem.setProgress(easyScore / GameModePage.levelPerDifficult);
         }
 
-        // Medium (Normal) Mode: Locked if score is 0.
+        // Medium (Normal) Mode: Unlocked if easyScore reaches required minimum.
         const mediumScore = UserScoreLoadSave.getScore(DifficultMode.Normal);
         if (this.uiRef.mediumModeItem) {
-            const isLocked = mediumScore === 0;
+            const isLocked = easyScore < GameModePage.minLevelToUnlockNextMode;
             this.uiRef.mediumModeItem.setLockStatus(isLocked);
             this.uiRef.mediumModeItem.setProgress(mediumScore / GameModePage.levelPerDifficult);
         }
 
-        // Hard Mode: Locked if score is 0.
+        // Hard Mode: Unlocked if mediumScore reaches required minimum.
         const hardScore = UserScoreLoadSave.getScore(DifficultMode.Hard);
         if (this.uiRef.hardModeItem) {
-            const isLocked = hardScore === 0;
+            const isLocked = mediumScore < GameModePage.minLevelToUnlockNextMode;
             this.uiRef.hardModeItem.setLockStatus(isLocked);
             this.uiRef.hardModeItem.setProgress(hardScore / GameModePage.levelPerDifficult);
         }
