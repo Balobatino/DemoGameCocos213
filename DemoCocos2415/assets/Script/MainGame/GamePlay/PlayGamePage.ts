@@ -437,7 +437,7 @@ export class PlayGamePage extends Singleton<PlayGamePage> {
                 console.log("PlayGamePage: user finish the current level");
                 GameStats.stats.turnIndex++;
 
-                if (GameStats.stats.turnIndex >= this.levelSequenceData.sequenceLength) {
+                if (GameStats.stats.turnIndex >= this.currentLevelData.turnPerLevel) {
                     // a bit hardcode here, currently we have 10 levels per difficult mode
                     if (GameStats.userSelect.selectLevel < 10) {
                         console.log("PlayGamePage: user finish all turns for the level, open WindLevelPage");
