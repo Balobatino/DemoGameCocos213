@@ -119,7 +119,7 @@ export class GameMainPage extends Singleton<GameMainPage> {
             return;
         }
         // also call it to update content since user score may changed
-        gameModePage.configContentForDifficultMode();
+        // gameModePage.configContentForDifficultMode();
         const uiPage = gameModePage.getUiPage();
         if (uiPage) {
             uiPage.show();
