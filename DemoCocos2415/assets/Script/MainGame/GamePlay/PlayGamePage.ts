@@ -8,6 +8,7 @@ import { LevelSelectPage } from "../UI/LevelSelectPage/LevelSelectPage";
 import { ListenAndRepeatPage } from "../UI/ListenAndRepeatPage";
 import { GoodNextSequencePage } from "../UI/GoodNextSequencePage";
 import WinLevelPage from "../UI/WinLevelPage";
+import WinModePage from "../UI/WinModePage";
 import FailedLevelPage from "../UI/FailedLevelPage";
 import GameStats from "../GameStats/GameStats";
 import { CollectionUtils } from "../../Utils/CollectionUtils";
@@ -443,6 +444,7 @@ export class PlayGamePage extends Singleton<PlayGamePage> {
                         this.openWinLevelPopup();
                     } else {
                         console.log("PlayGamePage: user finish all level of the difficult, Open win mode page!");
+                        this.openWinDifficultModePopup();
                     }
                 } else {
                     console.log(`PlayGamePage: user completed turn ${GameStats.stats.turnIndex}, preparing next sequence.`);
@@ -635,6 +637,43 @@ export class PlayGamePage extends Singleton<PlayGamePage> {
                 winUiPage.show();
             } else {
                 console.warn("WinLevelPage: UIPage component not found; cannot call show().");
+            }
+        }, delay);
+    }
+
+    /**
+     * Opens the Win Difficult Mode popup.
+     * Hides this page and opens the win mode page after a delay.
+     */
+    private openWinDifficultModePopup(): void {
+        const uiPage = this.getUiPage();
+
+        // Guard: missing UIPage
+        if (!uiPage) {
+            console.warn("PlayGamePage: UIPage component not found; cannot call hide().");
+            return;
+        }
+
+        // hide the play game page
+        uiPage.hide();
+
+        // scale down and destroy instruments
+        void this.scaleDownInstrumentAndDestroy();
+
+        // Delay 75% of hide duration before opening the win mode page
+        const delay = uiPage.getHideDuration() * 0.75;
+        this.scheduleOnce(() => {
+            const winModePage = WinModePage.getInstance<WinModePage>();
+            if (!winModePage) {
+                console.warn("WinModePage singleton instance not found.");
+                return;
+            }
+
+            const winUiPage = winModePage.getUiPage();
+            if (winUiPage) {
+                winUiPage.show();
+            } else {
+                console.warn("WinModePage: UIPage component not found; cannot call show().");
             }
         }, delay);
     }
