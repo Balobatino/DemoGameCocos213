@@ -3235,14 +3235,14 @@
     "backButton": {
       "__id__": 85
     },
-    "easyModeButton": {
-      "__id__": 21
+    "easyModeItem": {
+      "__id__": 25
     },
-    "mediumModeButton": {
-      "__id__": 47
+    "mediumModeItem": {
+      "__id__": 51
     },
-    "hardModeButton": {
-      "__id__": 73
+    "hardModeItem": {
+      "__id__": 77
     }
   },
   {

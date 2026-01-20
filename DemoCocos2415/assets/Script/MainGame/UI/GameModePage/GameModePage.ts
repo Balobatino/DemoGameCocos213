@@ -3,6 +3,8 @@ import { UIPage } from "../../../Standard/UIPage/UIPage";
 import { GameMainPage } from "../GameMainPage";
 import { LevelSelectPage } from "../LevelSelectPage/LevelSelectPage";
 import GameStats, { DifficultMode } from "../../GameStats/GameStats";
+import GameModeItem from "./GameModeItem";
+import { UserScoreLoadSave } from "../../../UserScoreLoadSave/UserScoreLoadSave";
 
 const { ccclass, property } = cc._decorator;
 
@@ -14,14 +16,14 @@ export class UIReference {
     @property({ type: cc.Button })
     public backButton: cc.Button | null = null;
 
-    @property({ type: cc.Button })
-    public easyModeButton: cc.Button | null = null;
+    @property({ type: GameModeItem })
+    public easyModeItem: GameModeItem | null = null;
 
-    @property({ type: cc.Button })
-    public mediumModeButton: cc.Button | null = null;
+    @property({ type: GameModeItem })
+    public mediumModeItem: GameModeItem | null = null;
 
-    @property({ type: cc.Button })
-    public hardModeButton: cc.Button | null = null;
+    @property({ type: GameModeItem })
+    public hardModeItem: GameModeItem | null = null;
 }
 
 /**
@@ -29,6 +31,10 @@ export class UIReference {
  */
 @ccclass
 export class GameModePage extends Singleton<GameModePage> {
+    //------------------------------
+    //---- Constants
+    public static readonly levelPerDifficult = 10;
+
     //------------------------------
     //---- Inspector grouped UI references
     @property({ type: UIReference })
@@ -38,6 +44,8 @@ export class GameModePage extends Singleton<GameModePage> {
     //--- Private Properties
     // Cached UIPage component for the mode selection page.
     private uiPage: UIPage | null = null;
+
+    private itemUnsubscribes: Map<GameModeItem, () => void> = new Map();
 
     //------------------------------
     //--- Lifecycle Methods
@@ -49,6 +57,7 @@ export class GameModePage extends Singleton<GameModePage> {
     protected doOnLoad(): void {
         this.cacheComponents();
         this.registerButtonHandlers();
+        this.configContentForDifficultMode();
     }
 
     //------------------------------
@@ -58,6 +67,34 @@ export class GameModePage extends Singleton<GameModePage> {
      */
     public getUiPage(): UIPage | null {
         return this.uiPage;
+    }
+
+    /**
+     * Configure mode items based on saved progress and difficulty rules.
+     */
+    public configContentForDifficultMode(): void {
+        // Easy Mode: Always unlocked.
+        const easyScore = UserScoreLoadSave.getScore(DifficultMode.Easy);
+        if (this.uiRef.easyModeItem) {
+            this.uiRef.easyModeItem.setLockStatus(false);
+            this.uiRef.easyModeItem.setProgress(easyScore / GameModePage.levelPerDifficult);
+        }
+
+        // Medium (Normal) Mode: Locked if score is 0.
+        const mediumScore = UserScoreLoadSave.getScore(DifficultMode.Normal);
+        if (this.uiRef.mediumModeItem) {
+            const isLocked = mediumScore === 0;
+            this.uiRef.mediumModeItem.setLockStatus(isLocked);
+            this.uiRef.mediumModeItem.setProgress(mediumScore / GameModePage.levelPerDifficult);
+        }
+
+        // Hard Mode: Locked if score is 0.
+        const hardScore = UserScoreLoadSave.getScore(DifficultMode.Hard);
+        if (this.uiRef.hardModeItem) {
+            const isLocked = hardScore === 0;
+            this.uiRef.hardModeItem.setLockStatus(isLocked);
+            this.uiRef.hardModeItem.setProgress(hardScore / GameModePage.levelPerDifficult);
+        }
     }
 
     //------------------------------
@@ -88,21 +125,19 @@ export class GameModePage extends Singleton<GameModePage> {
             console.warn("GameModePage: backButton is not assigned in the inspector.");
         }
 
-        // Mode buttons
-        const easyBtn = this.uiRef.easyModeButton;
-        if (easyBtn) {
-            easyBtn.node.on(cc.Node.EventType.TOUCH_END, this.onEasyModeClicked, this);
-        }
+        // Mode items
+        const itemConfigs = [
+            { item: this.uiRef.easyModeItem, handler: () => this.onEasyModeClicked() },
+            { item: this.uiRef.mediumModeItem, handler: () => this.onMediumModeClicked() },
+            { item: this.uiRef.hardModeItem, handler: () => this.onHardModeClicked() },
+        ];
 
-        const mediumBtn = this.uiRef.mediumModeButton;
-        if (mediumBtn) {
-            mediumBtn.node.on(cc.Node.EventType.TOUCH_END, this.onMediumModeClicked, this);
-        }
-
-        const hardBtn = this.uiRef.hardModeButton;
-        if (hardBtn) {
-            hardBtn.node.on(cc.Node.EventType.TOUCH_END, this.onHardModeClicked, this);
-        }
+        itemConfigs.forEach((config) => {
+            if (config.item) {
+                const unsub = config.item.onSelected.add(config.handler);
+                this.itemUnsubscribes.set(config.item, unsub);
+            }
+        });
     }
 
     /**
@@ -203,19 +238,10 @@ export class GameModePage extends Singleton<GameModePage> {
             backBtn.node.off(cc.Node.EventType.TOUCH_END, this.onBackButtonClicked, this);
         }
 
-        const easyBtn = this.uiRef.easyModeButton;
-        if (easyBtn) {
-            easyBtn.node.off(cc.Node.EventType.TOUCH_END, this.onEasyModeClicked, this);
-        }
-
-        const mediumBtn = this.uiRef.mediumModeButton;
-        if (mediumBtn) {
-            mediumBtn.node.off(cc.Node.EventType.TOUCH_END, this.onMediumModeClicked, this);
-        }
-
-        const hardBtn = this.uiRef.hardModeButton;
-        if (hardBtn) {
-            hardBtn.node.off(cc.Node.EventType.TOUCH_END, this.onHardModeClicked, this);
-        }
+        // Unsubscribe all item listeners
+        this.itemUnsubscribes.forEach((unsubscribe) => {
+            unsubscribe();
+        });
+        this.itemUnsubscribes.clear();
     }
 }
