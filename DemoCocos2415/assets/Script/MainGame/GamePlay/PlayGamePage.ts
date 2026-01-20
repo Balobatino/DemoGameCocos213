@@ -575,6 +575,10 @@ export class PlayGamePage extends Singleton<PlayGamePage> {
             return;
         }
 
+        // text for GoodPage to show
+        const textToShow = `Good! Next turn ${GameStats.stats.turnIndex + 1}/${this.currentLevelData.turnPerLevel}`;
+        goodPage.setContentText(textToShow);
+
         // Show the good next sequence page
         uiPage.show();
         await this.sleep(uiPage.getShowDuration() * 1000);
