@@ -87,9 +87,9 @@ export default class GameModeItem extends cc.Component {
         // that run by UIElements (so far it seem call button.interactable will adjust the size, layout ... or something)
         // lead to animation component will calculate wrong size and make animation broken.
         // try someway, and finally call enable is work well.
-        if (this.uiRef.mainButton) {
-            this.uiRef.mainButton.enabled = !isLocked;
-        }
+        // if (this.uiRef.mainButton) {
+        //     this.uiRef.mainButton.enabled = !isLocked;
+        // }
     }
 
     /**
@@ -129,8 +129,8 @@ export default class GameModeItem extends cc.Component {
     }
 
     private handleSelectClicked(): void {
-        // Only trigger if not locked (safety check, though button interactable also handles this)
-        if (this._isLocked) return;
+        // // Only trigger if not locked (safety check, though button interactable also handles this)
+        // if (this._isLocked) return;
 
         // Dispatch this item to listeners (even if locked, so handlers can show "locked" feedback).
         this.onSelected.invoke(this);
