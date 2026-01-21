@@ -2,6 +2,7 @@ import { Singleton } from "../../../Standard/Singleton";
 import { UIPage } from "../../../Standard/UIPage/UIPage";
 import { GameMainPage } from "../GameMainPage";
 import { LevelSelectPage } from "../LevelSelectPage/LevelSelectPage";
+import FinishPreviousLevelToUnlockPage from "../FinishPreviousLevelToUnlockPage";
 import GameStats, { DifficultMode } from "../../GameStats/GameStats";
 import GameModeItem from "./GameModeItem";
 import { UserScoreLoadSave } from "../../../UserScoreLoadSave/UserScoreLoadSave";
@@ -183,12 +184,38 @@ export class GameModePage extends Singleton<GameModePage> {
 
     private onMediumModeClicked(): void {
         console.log("GameModePage: Medium Mode selected");
+        if (this.uiRef.mediumModeItem && this.uiRef.mediumModeItem.getLockedStatus()) {
+            this.showUnlockWarningPage();
+            return;
+        }
         this.navigateToLevelSelect(DifficultMode.Normal);
     }
 
     private onHardModeClicked(): void {
         console.log("GameModePage: Hard Mode selected");
+        if (this.uiRef.hardModeItem && this.uiRef.hardModeItem.getLockedStatus()) {
+            this.showUnlockWarningPage();
+            return;
+        }
         this.navigateToLevelSelect(DifficultMode.Hard);
+    }
+
+    /**
+     * Helper to show the unlock warning page for locked difficulty modes.
+     */
+    private showUnlockWarningPage(): void {
+        const unlockPage = FinishPreviousLevelToUnlockPage.getInstance<FinishPreviousLevelToUnlockPage>();
+        if (!unlockPage) {
+            console.warn("GameModePage: FinishPreviousLevelToUnlockPage singleton instance not found.");
+            return;
+        }
+
+        const uiPage = unlockPage.getUiPage();
+        if (uiPage) {
+            uiPage.show();
+        } else {
+            console.warn("GameModePage: FinishPreviousLevelToUnlockPage found but has no UIPage component.");
+        }
     }
 
     /**

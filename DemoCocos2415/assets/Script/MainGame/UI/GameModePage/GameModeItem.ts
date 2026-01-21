@@ -128,7 +128,7 @@ export default class GameModeItem extends cc.Component {
         // Only trigger if not locked (safety check, though button interactable also handles this)
         if (this._isLocked) return;
 
-        // Dispatch this item to listeners.
+        // Dispatch this item to listeners (even if locked, so handlers can show "locked" feedback).
         this.onSelected.invoke(this);
     }
 }

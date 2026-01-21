@@ -4,7 +4,7 @@ import { UIPage } from "../../Standard/UIPage/UIPage";
 const { ccclass, property } = cc._decorator;
 
 /**
- * Inspector group for ListenAndRepeatPage UI references.
+ * Inspector group for GoodNextSequencePage UI references.
  */
 @ccclass("GoodNextSequencePageUIReference")
 export class UIReference {
@@ -56,7 +56,7 @@ export class GoodNextSequencePage extends Singleton<GoodNextSequencePage> {
         if (this.uiRef.contentText) {
             this.uiRef.contentText.string = text;
         } else {
-            console.warn("ListenAndRepeatPage: contentText label is not assigned.");
+            console.warn("GoodNextSequencePage: contentText label is not assigned.");
         }
     }
 
@@ -78,7 +78,7 @@ export class GoodNextSequencePage extends Singleton<GoodNextSequencePage> {
         this.uiPage = inChildren && inChildren.length > 0 ? inChildren[0] : null;
 
         if (!this.uiPage) {
-            console.error(`ListenAndRepeatPage: UIPage component not found on node "${this.node.name}" or its children.`);
+            console.error(`GoodNextSequencePage: UIPage component not found on node "${this.node.name}" or its children.`);
         }
     }
 
