@@ -249,7 +249,7 @@
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
     "_spriteFrame": {
-      "__uuid__": "3e884e20-3cf2-4235-a425-0acd34264ba6"
+      "__uuid__": "7685761a-f460-48bb-ac6d-08588f55611c"
     },
     "_type": 1,
     "_sizeMode": 0,
@@ -681,7 +681,9 @@
   {
     "__type__": "InstrumentAnimationConfig",
     "showDuration": 0.3,
-    "showEasing": 23
+    "showEasing": 23,
+    "flickDuration": 0.2,
+    "flickEasing": 23
   },
   {
     "__type__": "cc.BlockInputEvents",
