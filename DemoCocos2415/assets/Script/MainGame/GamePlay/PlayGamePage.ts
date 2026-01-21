@@ -448,7 +448,7 @@ export class PlayGamePage extends Singleton<PlayGamePage> {
                         this.openWinDifficultModePopup();
                     }
                     // save current progress to UserScoreLoadSave
-                    UserScoreLoadSave.saveScore(GameStats.userSelect.difficultMode, GameStats.userSelect.selectLevel);
+                    this.saveScoreWhenWinLevel();
                 } else {
                     console.log(`PlayGamePage: user completed turn ${GameStats.stats.turnIndex}, preparing next sequence.`);
                     // Restart note index for the next turn
@@ -608,6 +608,18 @@ export class PlayGamePage extends Singleton<PlayGamePage> {
         // Re-enable interaction after the sequence playback
         if (this.uiPage) {
             this.uiPage.setActiveInteraction(true);
+        }
+    }
+
+    /**
+     * Saves the player's progress if the new level reached is higher than their previous score.
+     */
+    private saveScoreWhenWinLevel(): void {
+        const targetSave = GameStats.userSelect.selectLevel + 1;
+        const currentScore = UserScoreLoadSave.getScore(GameStats.userSelect.difficultMode);
+
+        if (targetSave > currentScore) {
+            UserScoreLoadSave.saveScore(GameStats.userSelect.difficultMode, targetSave);
         }
     }
 
