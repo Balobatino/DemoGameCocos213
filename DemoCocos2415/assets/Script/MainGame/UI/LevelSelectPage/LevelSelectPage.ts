@@ -145,8 +145,6 @@ export class LevelSelectPage extends Singleton<LevelSelectPage> {
                 console.warn("LevelSelectPage: GameModePage singleton instance not found.");
                 return;
             }
-            // also call it to update content since user score may changed
-            gameModePage.configContentForDifficultMode();
 
             const levelUiPage = gameModePage.getUiPage();
             if (levelUiPage) {

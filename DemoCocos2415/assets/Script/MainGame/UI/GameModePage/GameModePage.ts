@@ -59,7 +59,7 @@ export class GameModePage extends Singleton<GameModePage> {
     protected doOnLoad(): void {
         this.cacheComponents();
         this.registerButtonHandlers();
-        this.configContentForDifficultMode();
+        this.registerUiPageEvents();
     }
 
     //------------------------------
@@ -116,6 +116,15 @@ export class GameModePage extends Singleton<GameModePage> {
         if (!this.uiPage) {
             console.error(`GameModePage: UIPage component not found on node "${this.node.name}" or its children.`);
         }
+    }
+
+    private registerUiPageEvents(): void {
+        const uiPage = this.getUiPage();
+        if (!uiPage) return;
+
+        uiPage.onShowStart.add(() => {
+            this.configContentForDifficultMode();
+        });
     }
 
     private registerButtonHandlers(): void {
