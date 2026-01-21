@@ -34,7 +34,7 @@
       }
     ],
     "_prefab": {
-      "__id__": 37
+      "__id__": 38
     },
     "_opacity": 255,
     "_color": {
@@ -953,7 +953,7 @@
         1,
         1,
         1,
-        1
+        0
       ]
     },
     "_eulerAngles": {
@@ -1319,10 +1319,19 @@
       "__id__": 1
     },
     "_enabled": true,
-    "uiRef": {
+    "data": {
       "__id__": 36
     },
+    "uiRef": {
+      "__id__": 37
+    },
     "_id": ""
+  },
+  {
+    "__type__": "WinLevelPageData",
+    "winAudio": {
+      "__uuid__": "5719649b-c917-49c6-9e6c-2d1c747f5686"
+    }
   },
   {
     "__type__": "WinLevelPageUIReference",

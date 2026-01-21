@@ -34,7 +34,7 @@
       }
     ],
     "_prefab": {
-      "__id__": 37
+      "__id__": 38
     },
     "_opacity": 255,
     "_color": {
@@ -1321,10 +1321,19 @@
       "__id__": 1
     },
     "_enabled": true,
-    "uiRef": {
+    "data": {
       "__id__": 36
     },
+    "uiRef": {
+      "__id__": 37
+    },
     "_id": ""
+  },
+  {
+    "__type__": "FailedLevelPageData",
+    "failedAudio": {
+      "__uuid__": "db1d6508-247e-41b4-8aff-afc79d21dffd"
+    }
   },
   {
     "__type__": "FailedLevelPageUIReference",

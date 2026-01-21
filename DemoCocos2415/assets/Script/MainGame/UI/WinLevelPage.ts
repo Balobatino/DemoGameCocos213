@@ -4,8 +4,18 @@ import { GameModePage } from "./GameModePage/GameModePage";
 import { LevelSelectPage } from "./LevelSelectPage/LevelSelectPage";
 import { PlayGamePage } from "../GamePlay/PlayGamePage";
 import GameStats from "../GameStats/GameStats";
+import { AudioManager } from "../../Standard/Audio/AudioManager";
 
 const { ccclass, property } = cc._decorator;
+
+/**
+ * Inspector group for Win Level Page data.
+ */
+@ccclass("WinLevelPageData")
+export class Data {
+    @property({ type: cc.AudioClip })
+    public winAudio: cc.AudioClip | null = null;
+}
 
 /**
  * Inspector group for Win Level Page UI references.
@@ -29,6 +39,9 @@ export class UIReference {
 export default class WinLevelPage extends Singleton<WinLevelPage> {
     //------------------------------
     //---- Inspector grouped UI references
+    @property(Data)
+    public data: Data = new Data();
+
     @property({ type: UIReference })
     public uiRef: UIReference = new UIReference();
 
@@ -47,6 +60,7 @@ export default class WinLevelPage extends Singleton<WinLevelPage> {
     protected doOnLoad(): void {
         this.cacheComponents();
         this.registerButtonHandlers();
+        this.registerUiPageEvents();
     }
 
     //------------------------------
@@ -96,6 +110,29 @@ export default class WinLevelPage extends Singleton<WinLevelPage> {
         if (nextLevelButton) {
             nextLevelButton.node.on(cc.Node.EventType.TOUCH_END, this.onNextLevelClicked, this);
         }
+    }
+
+    /**
+     * Subscribe to UIPage events (e.g., to play sound when the page starts showing).
+     */
+    private registerUiPageEvents(): void {
+        const uiPage = this.getUiPage();
+        if (!uiPage) return;
+
+        uiPage.onShowStart.add(() => {
+            this.playWinAudio();
+        });
+    }
+
+    /**
+     * Play the win audio clip through the AudioManager.
+     */
+    private playWinAudio(): void {
+        if (!this.data.winAudio) {
+            console.warn("WinLevelPage: winAudio clip is not assigned in the Data class.");
+            return;
+        }
+        AudioManager.getInstance<AudioManager>().playOnShot(this.data.winAudio);
     }
 
     /**

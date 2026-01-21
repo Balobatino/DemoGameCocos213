@@ -3,8 +3,18 @@ import { UIPage } from "../../Standard/UIPage/UIPage";
 import { GameModePage } from "./GameModePage/GameModePage";
 import { LevelSelectPage } from "./LevelSelectPage/LevelSelectPage";
 import { PlayGamePage } from "../GamePlay/PlayGamePage";
+import { AudioManager } from "../../Standard/Audio/AudioManager";
 
 const { ccclass, property } = cc._decorator;
+
+/**
+ * Inspector group for Failed Level Page data.
+ */
+@ccclass("FailedLevelPageData")
+export class Data {
+    @property({ type: cc.AudioClip })
+    public failedAudio: cc.AudioClip | null = null;
+}
 
 /**
  * Inspector group for Failed Level Page UI references.
@@ -27,6 +37,10 @@ export class UIReference {
 @ccclass
 export default class FailedLevelPage extends Singleton<FailedLevelPage> {
     //------------------------------
+    //---- Inspector grouped data
+    @property(Data)
+    public data: Data = new Data();
+
     //---- Inspector grouped UI references
     @property({ type: UIReference })
     public uiRef: UIReference = new UIReference();
@@ -46,6 +60,7 @@ export default class FailedLevelPage extends Singleton<FailedLevelPage> {
     protected doOnLoad(): void {
         this.cacheComponents();
         this.registerButtonHandlers();
+        this.registerUiPageEvents();
     }
 
     //------------------------------
@@ -95,6 +110,29 @@ export default class FailedLevelPage extends Singleton<FailedLevelPage> {
         if (replayButton) {
             replayButton.node.on(cc.Node.EventType.TOUCH_END, this.onReplayClicked, this);
         }
+    }
+
+    /**
+     * Subscribe to UIPage events (e.g., to play sound when the page starts showing).
+     */
+    private registerUiPageEvents(): void {
+        const uiPage = this.getUiPage();
+        if (!uiPage) return;
+
+        uiPage.onShowStart.add(() => {
+            this.playFailedAudio();
+        });
+    }
+
+    /**
+     * Play the failed audio clip through the AudioManager.
+     */
+    private playFailedAudio(): void {
+        if (!this.data.failedAudio) {
+            console.warn("FailedLevelPage: failedAudio clip is not assigned in the Data class.");
+            return;
+        }
+        AudioManager.getInstance<AudioManager>().playOnShot(this.data.failedAudio);
     }
 
     /**

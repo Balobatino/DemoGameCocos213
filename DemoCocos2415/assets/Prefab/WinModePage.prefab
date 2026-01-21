@@ -34,7 +34,7 @@
       }
     ],
     "_prefab": {
-      "__id__": 29
+      "__id__": 30
     },
     "_opacity": 255,
     "_color": {
@@ -1004,10 +1004,19 @@
       "__id__": 1
     },
     "_enabled": true,
-    "uiRef": {
+    "data": {
       "__id__": 28
     },
+    "uiRef": {
+      "__id__": 29
+    },
     "_id": ""
+  },
+  {
+    "__type__": "WinModePageData",
+    "winAudio": {
+      "__uuid__": "5719649b-c917-49c6-9e6c-2d1c747f5686"
+    }
   },
   {
     "__type__": "WinModePageUIReference",
