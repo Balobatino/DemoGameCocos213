@@ -83,8 +83,12 @@ export default class GameModeItem extends cc.Component {
             this.uiRef.rootProgress.active = !isLocked;
         }
 
+        // NOTES : Disable button interaction right when we call page show/hide will disable the button animation
+        // that run by UIElements (so far it seem call button.interactable will adjust the size, layout ... or something)
+        // lead to animation component will calculate wrong size and make animation broken.
+        // try someway, and finally call enable is work well.
         if (this.uiRef.mainButton) {
-            this.uiRef.mainButton.interactable = !isLocked;
+            this.uiRef.mainButton.enabled = !isLocked;
         }
     }
 
