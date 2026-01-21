@@ -2,7 +2,7 @@
   "excludeScenes": [],
   "orientation": {
     "landscapeLeft": true,
-    "landscapeRight": false,
+    "landscapeRight": true,
     "portrait": false,
     "upsideDown": false
   },
