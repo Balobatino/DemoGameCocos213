@@ -1,6 +1,7 @@
 const { ccclass, property } = cc._decorator;
 import { UIElement } from "./UIElement";
 import { setAsLastSibling } from "../../Utils/NodeUtils";
+import { TypedEvent } from "../../Utils/TypedEvent";
 
 /**
  * UIPage: container for a page composed of multiple UIElement components.
@@ -18,6 +19,24 @@ export class UIPage extends cc.Component {
     // Whether to automatically call `show()` in `onEnable()` when the page is not hidden by default.
     @property({ tooltip: "If true and hideByDefault is false, the page will call show() when enabled." })
     showAtOnEnable = false;
+
+    //------------------------------
+    //------ Events
+
+    /** Event fired when the show animation / process starts. */
+    public readonly onShowStart = new TypedEvent<UIPage>();
+
+    /** Event fired when the show animation / process completes. */
+    public readonly onShowFinish = new TypedEvent<UIPage>();
+
+    /** Event fired when the hide animation / process starts. */
+    public readonly onHideStart = new TypedEvent<UIPage>();
+
+    /** Event fired when the hide animation / process completes. */
+    public readonly onHideFinish = new TypedEvent<UIPage>();
+
+    //------------------------------
+    //------ Private Properties
 
     // UIElement components assigned via the Cocos Creator inspector.
     private uiElements: UIElement[] = [];
@@ -78,6 +97,9 @@ export class UIPage extends cc.Component {
         // Reset any pending scheduled callbacks (e.g., a pending hide opacity setter).
         this.unscheduleAllCallbacks();
 
+        // Notify listeners that show process has started.
+        this.onShowStart.invoke(this);
+
         // Block interaction while show animations run.
         this.setActiveInteraction(false);
 
@@ -97,9 +119,11 @@ export class UIPage extends cc.Component {
         if (showDuration === 0) {
             // Re-enable immediately if there is no animation.
             this.setActiveInteraction(true);
+            this.onShowFinish.invoke(this);
         } else {
             this.scheduleOnce(() => {
                 this.setActiveInteraction(true);
+                this.onShowFinish.invoke(this);
             }, showDuration);
         }
     }
@@ -107,6 +131,9 @@ export class UIPage extends cc.Component {
     public hide(): void {
         // Reset any pending scheduled callbacks (e.g., a pending hide opacity setter).
         this.unscheduleAllCallbacks();
+
+        // Notify listeners that hide process has started.
+        this.onHideStart.invoke(this);
 
         // Disable interactions immediately while hiding.
         this.setActiveInteraction(false);
@@ -127,9 +154,11 @@ export class UIPage extends cc.Component {
         const hideDuration = Math.max(0, this.getHideDuration());
         if (hideDuration === 0) {
             this.node.opacity = 0;
+            this.onHideFinish.invoke(this);
         } else {
             this.scheduleOnce(() => {
                 this.node.opacity = 0;
+                this.onHideFinish.invoke(this);
             }, hideDuration);
         }
     }
