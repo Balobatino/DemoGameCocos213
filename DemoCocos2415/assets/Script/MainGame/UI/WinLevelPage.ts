@@ -110,11 +110,6 @@ export default class WinLevelPage extends Singleton<WinLevelPage> {
      */
     private onGameModeSelectClicked(): void {
         this.navigateToPage(() => GameModePage.getInstance<GameModePage>());
-        // also call it to update content since user score may changed
-        const gameModePage = GameModePage.getInstance<GameModePage>();
-        if (gameModePage) {
-            gameModePage.configContentForDifficultMode();
-        }
     }
 
     /**
