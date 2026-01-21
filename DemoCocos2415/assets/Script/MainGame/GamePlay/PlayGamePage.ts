@@ -10,7 +10,7 @@ import { GoodNextSequencePage } from "../UI/GoodNextSequencePage";
 import WinLevelPage from "../UI/WinLevelPage";
 import WinModePage from "../UI/WinModePage";
 import FailedLevelPage from "../UI/FailedLevelPage";
-import GameStats from "../GameStats/GameStats";
+import GameStats, { DifficultMode } from "../GameStats/GameStats";
 import { CollectionUtils } from "../../Utils/CollectionUtils";
 import InstrumentButton from "./InstrumentButton";
 import { UserScoreLoadSave } from "../../UserScoreLoadSave/UserScoreLoadSave";
@@ -25,8 +25,14 @@ export class UIReference {
     @property({ type: cc.Button })
     public backButton: cc.Button | null = null;
 
-    @property({ type: cc.Layout })
-    public rootInstrument: cc.Layout | null = null;
+    @property({ type: cc.Node })
+    public rootInstrument: cc.Node | null = null;
+
+    @property(cc.Node)
+    public easyModeNodeSize: cc.Node = null;
+
+    @property(cc.Node)
+    public hardModeNodeSize: cc.Node = null;
 }
 
 /**
@@ -36,9 +42,6 @@ export class UIReference {
 export class Data {
     @property({ type: [cc.Prefab] })
     public instrumentPrefabs: cc.Prefab[] = [];
-
-    @property({ type: cc.Float })
-    public instrumentDisplayWidth: number = 0;
 
     @property({ type: cc.Prefab })
     public InstrumentAudioStoragePrefab: cc.Prefab = null;
@@ -222,6 +225,37 @@ export class PlayGamePage extends Singleton<PlayGamePage> {
     //--- Game Session Initialization
 
     /**
+     * Calculates the width of an instrument based on the difficulty mode and available space.
+     * @param mode - The current difficulty mode.
+     * @returns The calculated width for the instrument.
+     */
+    private getWidthForInstrumentOfDifficultMode(mode: DifficultMode): number {
+        if (!this.levelStorage) return 0;
+
+        const easyConfig = this.levelStorage.getLevelConfigForDifficultMode(DifficultMode.Easy);
+        const hardConfig = this.levelStorage.getLevelConfigForDifficultMode(DifficultMode.Hard);
+
+        if (!easyConfig || !hardConfig || !this.uiRef.easyModeNodeSize || !this.uiRef.hardModeNodeSize) {
+            return 0;
+        }
+
+        const easyWidth = this.uiRef.easyModeNodeSize.width / easyConfig.numberOfInstruments;
+        const hardWidth = this.uiRef.hardModeNodeSize.width / hardConfig.numberOfInstruments;
+
+        if (mode === DifficultMode.Easy) return easyWidth;
+        if (mode === DifficultMode.Hard) return hardWidth;
+
+        // For other modes, lerp based on the number of instruments
+        const currentConfig = this.levelStorage.getLevelConfigForDifficultMode(mode);
+        if (!currentConfig) return easyWidth;
+
+        const numDiff = hardConfig.numberOfInstruments - easyConfig.numberOfInstruments;
+        const ratio = numDiff === 0 ? 0 : (currentConfig.numberOfInstruments - easyConfig.numberOfInstruments) / numDiff;
+
+        return cc.misc.lerp(easyWidth, hardWidth, ratio);
+    }
+
+    /**
      * Initializes the game session: configures levels, spawns instruments, and plays entry animations.
      */
     public async runStartGameProcess(): Promise<void> {
@@ -254,18 +288,18 @@ export class PlayGamePage extends Singleton<PlayGamePage> {
 
         // Determine which instruments to spawn
         const pickedPrefabs = CollectionUtils.randomPickFromList(this.data.instrumentPrefabs, levelData.numberOfInstruments);
-        // log number of instruments picked
-        // console.log(`PlayGamePage: picked ${pickedPrefabs.length} instrument prefabs for difficulty ${mode}, expected ${levelData.numberOfInstruments}.`);
+
+        const targetWidth = this.getWidthForInstrumentOfDifficultMode(mode);
 
         for (let n = 0; n < pickedPrefabs.length; n++) {
             const prefab = pickedPrefabs[n];
             const insNode = cc.instantiate(prefab);
 
-            // Parent to the root layout container
+            // Parent to the root container node
             if (this.uiRef.rootInstrument) {
-                insNode.parent = this.uiRef.rootInstrument.node;
+                insNode.parent = this.uiRef.rootInstrument;
             } else {
-                console.error("PlayGamePage: rootInstrument layout is not assigned in the inspector.");
+                console.error("PlayGamePage: rootInstrument is not assigned in the inspector.");
             }
 
             const insBtn = insNode.getComponent(InstrumentButton);
@@ -284,16 +318,25 @@ export class PlayGamePage extends Singleton<PlayGamePage> {
                 console.error(`PlayGamePage: InstrumentButton component not found on instantiated prefab at index ${n}.`);
             }
 
+            // Update size based on target width while maintaining aspect ratio
+            const originalWidth = insNode.width;
+            const originalHeight = insNode.height;
+            const scale = targetWidth / originalWidth;
+            insNode.setContentSize(targetWidth, originalHeight * scale);
+
             // Immediately set to scale 0 to hide it before the animation pass
             insNode.setScale(0, 0, 1);
         }
 
-        // config size and force a layout update so positions are finalized before animating
-        const layout = this.uiRef.rootInstrument;
-        if (layout) {
-            const totalWidth = pickedPrefabs.length * this.data.instrumentDisplayWidth;
-            layout.node.width = totalWidth;
-            layout.updateLayout();
+        // Calculate and apply positions for instruments to spread evenly horizontally
+        const numInstruments = this.instrumentButtons.length;
+        const totalHorizontalWidth = numInstruments * targetWidth;
+        const startX = -(totalHorizontalWidth / 2) + targetWidth / 2;
+
+        for (let i = 0; i < numInstruments; i++) {
+            const insBtn = this.instrumentButtons[i];
+            insBtn.node.x = startX + i * targetWidth;
+            insBtn.node.y = 0;
         }
 
         // Retrieve easing once to avoid map lookup in the loop
@@ -320,11 +363,6 @@ export class PlayGamePage extends Singleton<PlayGamePage> {
 
         // Run the note sequence playback
         await this.runNotesSequence();
-
-        // Re-enable layout so it can handle any future structural changes
-        if (layout) {
-            layout.enabled = true;
-        }
 
         // Preparation complete, re-enable back navigation
         if (this.uiRef.backButton) {
