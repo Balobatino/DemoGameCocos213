@@ -55,6 +55,7 @@ export class LevelSelectPage extends Singleton<LevelSelectPage> {
         this.cacheComponents();
         this.registerButtonHandlers();
         this.loadAndRegisterItemListeners();
+        this.registerUiPageEvents();
     }
 
     //------------------------------
@@ -77,6 +78,8 @@ export class LevelSelectPage extends Singleton<LevelSelectPage> {
         // update the progress according to current difficult mode
         const mode = GameStats.userSelect.difficultMode;
         this.currentProgress = UserScoreLoadSave.getScore(mode);
+        // log the current progress
+        console.log(`LevelSelectPage: Current progress for mode "${mode}" is level index ${this.currentProgress}.`);
         // update each item's lock status
         for (const item of this.gameLevelSelectItems) {
             item.setActiveLock(item.levelIndex > this.currentProgress);
@@ -185,6 +188,15 @@ export class LevelSelectPage extends Singleton<LevelSelectPage> {
 
             this.itemUnsubscribes.set(item, unsubscribe);
         }
+    }
+
+    private registerUiPageEvents(): void {
+        const uiPage = this.getUiPage();
+        if (!uiPage) return;
+
+        uiPage.onShowStart.add(() => {
+            this.refreshLevelItemLockedStatus();
+        });
     }
 
     private onItemSelected(levelIndex: number, item: LevelSelectItem): void {
