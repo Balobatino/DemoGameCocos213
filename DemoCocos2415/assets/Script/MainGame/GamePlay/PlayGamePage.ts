@@ -288,7 +288,7 @@ export class PlayGamePage extends Singleton<PlayGamePage> {
 
         // Determine which instruments to spawn
         const pickedPrefabs = CollectionUtils.randomPickFromList(this.data.instrumentPrefabs, levelData.numberOfInstruments);
-
+        // target width for each instrument to arrange them in root container
         const targetWidth = this.getWidthForInstrumentOfDifficultMode(mode);
 
         for (let n = 0; n < pickedPrefabs.length; n++) {
