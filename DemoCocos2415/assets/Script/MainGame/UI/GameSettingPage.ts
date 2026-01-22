@@ -142,7 +142,7 @@ export class GameSettingPage extends Singleton<GameSettingPage> {
      * Use sys.openURL on native/mobile (works on iOS). Fallback to window.open for web preview.
      */
     private onPolicyButtonClicked(): void {
-        const policyUrl = "https://doc-hosting.flycricket.io/funny-memory-card-matching-game-privacy-policy/645b03e8-8258-4d27-88ad-054ace69d2da/privacy";
+        const policyUrl = "https://doc-hosting.flycricket.io/notes-sequence-jumper-privacy-policy/ec1c804c-36c2-46d3-a987-3e56600d5af4/privacy";
         // Attempt to open the policy URL using platform-specific APIs
         try {
             // default use cc.sys.openURL if available (Cocos 2.x)
