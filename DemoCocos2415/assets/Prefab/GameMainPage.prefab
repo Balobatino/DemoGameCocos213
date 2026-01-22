@@ -37,13 +37,10 @@
       },
       {
         "__id__": 30
-      },
-      {
-        "__id__": 32
       }
     ],
     "_prefab": {
-      "__id__": 33
+      "__id__": 32
     },
     "_opacity": 255,
     "_color": {
@@ -672,7 +669,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        -488.91999999999996,
+        -466.2,
         243,
         0,
         0,
@@ -973,7 +970,7 @@
     "alignMode": 1,
     "_target": null,
     "_alignFlags": 9,
-    "_left": 0.03,
+    "_left": 0.05,
     "_right": 0,
     "_top": 0.05,
     "_bottom": 0.1,
@@ -1073,16 +1070,6 @@
     "settingsButton": {
       "__id__": 22
     }
-  },
-  {
-    "__type__": "cc.SafeArea",
-    "_name": "",
-    "_objFlags": 0,
-    "node": {
-      "__id__": 1
-    },
-    "_enabled": true,
-    "_id": ""
   },
   {
     "__type__": "cc.PrefabInfo",
