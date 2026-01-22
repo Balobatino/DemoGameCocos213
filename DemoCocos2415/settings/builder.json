@@ -8,7 +8,7 @@
   },
   "packageName": "org.cocos2d.helloworld",
   "startScene": "18280a38-dc67-45e2-ba61-b1eb2e2fb205",
-  "title": "DemoCocos2415",
+  "title": "NotesSequenceJumper",
   "webOrientation": "auto",
   "inlineSpriteFrames": true,
   "inlineSpriteFrames_native": true,
@@ -26,7 +26,7 @@
     "REMOTE_SERVER_ROOT": ""
   },
   "ios": {
-    "packageName": "org.balobatino.demococos2415",
+    "packageName": "org.kamal.balobatino.notesequencejumper",
     "REMOTE_SERVER_ROOT": "",
     "ios_enable_jit": true
   },
